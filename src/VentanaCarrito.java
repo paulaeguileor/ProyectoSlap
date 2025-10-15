@@ -1,4 +1,5 @@
+import javax.swing.JFrame;
 
-public class VentanaCarrito {
+public class VentanaCarrito extends JFrame{
 
 }

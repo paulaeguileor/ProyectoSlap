@@ -1,4 +1,5 @@
+import javax.swing.JFrame;
 
-public class VentanaInicial {
+public class VentanaInicial extends JFrame{
 
 }
