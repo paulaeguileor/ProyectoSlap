@@ -4,19 +4,19 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class VentanaCarrito extends JFrame{
+public class MiCuenta extends JFrame{
 
 	private static final long serialVersionUID = 1L;
-	private JFrame vActual, vAnterior; 
+	private JFrame vActual, vAnterior;
 	private JPanel pSur; 
 	private JButton btnVolver;
 	
-	public VentanaCarrito(JFrame va) {
+	public MiCuenta(JFrame va) {
 		super();
-		vActual = this;
+		vActual = this; 
 		vAnterior = va;
 		
-		setTitle("CARRITO");
+		setTitle("Mi cuenta");
 		setSize(1500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,9 +34,7 @@ public class VentanaCarrito extends JFrame{
         	vActual.dispose();
         });
         
-
-        
-        
         setVisible(true);
 	}
+
 }

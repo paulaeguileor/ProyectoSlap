@@ -1,22 +1,24 @@
+package ropa;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class VentanaCarrito extends JFrame{
+public class Pantalones extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	private JFrame vActual, vAnterior; 
 	private JPanel pSur; 
 	private JButton btnVolver;
 	
-	public VentanaCarrito(JFrame va) {
+	public Pantalones(JFrame va) {
 		super();
 		vActual = this;
 		vAnterior = va;
 		
-		setTitle("CARRITO");
+		setTitle("Pantalones");
 		setSize(1500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,13 +32,11 @@ public class VentanaCarrito extends JFrame{
         pSur.add(btnVolver);
         
         btnVolver.addActionListener((e)->{
-        	vAnterior.setVisible(true);
         	vActual.dispose();
+        	vAnterior.setVisible(true);
         });
-        
-
-        
-        
         setVisible(true);
+		
 	}
+
 }
