@@ -81,12 +81,12 @@ public class VentanaInicial extends JFrame {
         
         //LISTENERS 
         btnUsuario.addActionListener((e)->{
-        	ventanaActual.dispose();
-        	new MiCuenta(ventanaActual);
+        	setVisible(false);   // oculta la ventana actual
+            new InicioSesion(this);
         });
         
         btnCarrito.addActionListener((e)->{
-        	ventanaActual.dispose();
+        	ventanaActual.setVisible(false);
         	new VentanaCarrito(ventanaActual);
         });
         
@@ -119,8 +119,6 @@ public class VentanaInicial extends JFrame {
         	ventanaActual.setVisible(false);
         	new Bolsos(ventanaActual);
         });
-   
-       
         
 
         setVisible(true);
