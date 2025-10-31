@@ -1,12 +1,7 @@
+package ventanas;
 import javax.swing.*;
 
-import ropa.Abrigos;
-import ropa.Bolsos;
-import ropa.Calzado;
-import ropa.Camisas;
-import ropa.Jerseis;
-import ropa.Pantalones;
-import ropa.Vestidos;
+
 
 import java.awt.*;
 

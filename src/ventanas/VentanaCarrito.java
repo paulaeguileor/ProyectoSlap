@@ -1,22 +1,23 @@
+package ventanas;
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class MiCuenta extends JFrame{
+public class VentanaCarrito extends JFrame{
 
 	private static final long serialVersionUID = 1L;
-	private JFrame vActual, vAnterior;
+	private JFrame vActual, vAnterior; 
 	private JPanel pSur; 
 	private JButton btnVolver;
 	
-	public MiCuenta(JFrame va) {
+	public VentanaCarrito(JFrame va) {
 		super();
-		vActual = this; 
+		vActual = this;
 		vAnterior = va;
 		
-		setTitle("Mi cuenta");
+		setTitle("CARRITO");
 		setSize(1500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,7 +35,9 @@ public class MiCuenta extends JFrame{
         	vActual.dispose();
         });
         
+
+        
+        
         setVisible(true);
 	}
-
 }
