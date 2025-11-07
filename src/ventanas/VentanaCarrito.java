@@ -1,6 +1,11 @@
 package ventanas;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 import clases.Articulo;
 import clases.Color;
@@ -31,10 +37,12 @@ public class VentanaCarrito extends JFrame{
 	private JLabel lblTotalm, lblTotalCalulado, lblBarraVertical, lblNumArt, lblContadorArticulos;
 	private JButton btnE, btnContinuarCompra, btnVaciar;
 	
+	private int fila; 
 	public VentanaCarrito(JFrame va) {
 		super();
 		vActual = this;
 		vAnterior = va;
+		fila = -1;
 		
 		setTitle("CARRITO");
 		setSize(1500, 600);
@@ -174,7 +182,37 @@ public class VentanaCarrito extends JFrame{
         	vActual.dispose();
         });
         
-
+        tabla.setDefaultRenderer(Object.class, new TableCellRenderer() {
+			
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+					int row, int column) {
+				JLabel lbl = new JLabel(value.toString());
+				lbl.setOpaque(true);
+				if(fila == row) {
+					lbl.setBackground(java.awt.Color.LIGHT_GRAY);
+				}
+				return lbl; 
+			}
+		});
+        
+        tabla.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+				fila = tabla.rowAtPoint(p);
+				tabla.repaint();
+				
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
         
         
         setVisible(true);
