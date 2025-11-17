@@ -1,8 +1,6 @@
 package ventanas;
 import javax.swing.*;
 
-
-
 import java.awt.*;
 
 public class VentanaInicial extends JFrame {
@@ -87,11 +85,12 @@ public class VentanaInicial extends JFrame {
             new InicioSesion(this);
         });
         
-        btnCarrito.addActionListener((e)->{
-        	ventanaActual.setVisible(false);
-        	new VentanaCarrito(ventanaActual);
-        });
         
+        btnCarrito.addActionListener(e -> {
+            ventanaActual.setVisible(false);
+            new VentanaCarrito(ventanaActual); // ya no hace falta pasar el carrito
+        });
+
         btnCamisas.addActionListener((e)->{
         	ventanaActual.setVisible(false);
         	new Camisas(ventanaActual);

@@ -1,7 +1,13 @@
 package ventanas;
 
 import java.awt.*;
+import java.util.List;
+
 import javax.swing.*;
+
+import clases.CarritoGlobal;
+import clases.Jersey;
+import clases.MainArticulos;
 
 public class Jerseis extends JFrame {
 
@@ -37,10 +43,12 @@ public class Jerseis extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
+        MainArticulos mainArt = new MainArticulos();
+        List<Jersey> listaJerseis = mainArt.getListaJerseis();
         // --- Cargar imágenes manteniendo proporción ---
-        for (int i = 1; i <= 12; i++) {
+        for (Jersey jersey: listaJerseis) {
         	JPanel pArticulo = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon("img/jerseis/jersey" + i + ".png");
+            ImageIcon icon = new ImageIcon("img/jerseis/jersey" + jersey.getCodigo() + ".png");
 
             // Obtener dimensiones originales
             int originalWidth = icon.getIconWidth();
@@ -72,7 +80,10 @@ public class Jerseis extends JFrame {
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
             
             JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
-            
+            btnAniadirCarrito.addActionListener(e -> {
+                CarritoGlobal.addArticulo(jersey);
+                JOptionPane.showMessageDialog(null, jersey.getDesc() + " añadido al carrito.");
+            });
             pArticulo.add(lbl, BorderLayout.CENTER);
             pArticulo.add(btnAniadirCarrito, BorderLayout.SOUTH);
             
