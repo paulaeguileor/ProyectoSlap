@@ -39,6 +39,7 @@ public class Vestidos extends JFrame {
 
         // --- Cargar imágenes manteniendo proporción ---
         for (int i = 1; i <= 12; i++) {
+        	JPanel pArticulo = new JPanel(new BorderLayout());
             ImageIcon icon = new ImageIcon("img/vestidos/vestido" + i + ".png");
 
             // Obtener dimensiones originales
@@ -70,8 +71,13 @@ public class Vestidos extends JFrame {
             // Tamaño uniforme del marco de cada imagen
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
-            pCentro.add(lbl);
-        }
+            JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
+            
+            pArticulo.add(lbl, BorderLayout.CENTER);
+            pArticulo.add(btnAniadirCarrito, BorderLayout.SOUTH);
+            
+            pCentro.add(pArticulo);
+            }
 
         // --- Scroll con panel central ---
         scrollPane = new JScrollPane(pCentro);
