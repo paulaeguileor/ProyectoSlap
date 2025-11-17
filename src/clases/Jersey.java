@@ -29,9 +29,8 @@ public class Jersey extends Articulo{
 	@Override
 	public String toString() {
 		return "Jersey [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
-	}
 
-	
+	}
 
 	
 }

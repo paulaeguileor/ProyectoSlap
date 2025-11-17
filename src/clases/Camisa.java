@@ -28,7 +28,7 @@ public class Camisa extends Articulo{
 
 	@Override
 	public String toString() {
-		return "Camisa [ codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
+		return "Camisa [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
 	}
 
 	

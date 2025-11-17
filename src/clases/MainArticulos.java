@@ -7,7 +7,7 @@ public class MainArticulos {
 	
 	
 	public static void main(String[] args) {
-		List<Articulo> lArticulos = new ArrayList<>();
+		List<Articulo> listaArticulos = new ArrayList<>();
 		
 	}
 }

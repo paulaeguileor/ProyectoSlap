@@ -14,9 +14,10 @@ public class Bolso extends Articulo{
 
 	@Override
 	public String toString() {
-		return "Bolso [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio +"]";
+		return "Bolso [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + "]";
 	}
 
+	
 	
 
 	

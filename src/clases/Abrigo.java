@@ -28,7 +28,7 @@ public class Abrigo extends Articulo{
 
 	@Override
 	public String toString() {
-		return "Abrigo [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
+		return "Abrigo [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + "]";
 	}
 
 	

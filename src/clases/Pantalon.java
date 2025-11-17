@@ -31,5 +31,6 @@ public class Pantalon extends Articulo{
 		return "Pantalon [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
 	}
 
+
 	
 }
