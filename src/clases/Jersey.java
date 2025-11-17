@@ -28,10 +28,10 @@ public class Jersey extends Articulo{
 
 	@Override
 	public String toString() {
-		return "Jersey [talla=" + talla + ", codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio="
-				+ precio + ", getTalla()=" + getTalla() + ", getCodigo()=" + getCodigo() + ", getDesc()=" + getDesc()
-				+ ", getColor()=" + getColor() + ", getPrecio()=" + getPrecio() + ", toString()=" + super.toString()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
+		return "Jersey [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
 	}
+
+	
+
 	
 }

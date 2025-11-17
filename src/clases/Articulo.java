@@ -42,11 +42,9 @@ public class Articulo {
 	}
 	@Override
 	public String toString() {
-		return "Articulo [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio
-				+ ", getCodigo()=" + getCodigo() + ", getDesc()=" + getDesc() + ", getColor()=" + getColor()
-				+ ", getPrecio()=" + getPrecio() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+		return "Articulo [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + "]";
 	}
+	
 	
 	
 }

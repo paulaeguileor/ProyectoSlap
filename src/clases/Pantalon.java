@@ -5,7 +5,7 @@ public class Pantalon extends Articulo{
 
 	public Pantalon() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Pantalon(int codigo, String desc, Color color, double precio) {
@@ -28,10 +28,8 @@ public class Pantalon extends Articulo{
 
 	@Override
 	public String toString() {
-		return "Pantalon [talla=" + talla + ", codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio="
-				+ precio + ", getTalla()=" + getTalla() + ", getCodigo()=" + getCodigo() + ", getDesc()=" + getDesc()
-				+ ", getColor()=" + getColor() + ", getPrecio()=" + getPrecio() + ", toString()=" + super.toString()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
+		return "Pantalon [codigo=" + codigo + ", desc=" + desc + ", color=" + color + ", precio=" + precio + ", talla=" + talla + "]";
 	}
+
 	
 }
