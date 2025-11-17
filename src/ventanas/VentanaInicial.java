@@ -10,7 +10,7 @@ public class VentanaInicial extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel pNorte, pCentro, pSur, pBotones, pMenu;
     private JTextField buscar; 
-    private JLabel logo, footer; 
+    private JLabel logo, footer, lblImagen; 
     private JButton btnUsuario, btnCarrito, btnCamisas, btnJerseis, btnAbrigos, btnVestidos, btnPantalones, btnCalzado, btnBolsos;
     
     private JFrame ventanaActual; 
@@ -57,6 +57,8 @@ public class VentanaInicial extends JFrame {
         logo = new JLabel("S L A P");
         logo.setFont(new Font("Serif", Font.BOLD, 36)); 
         logo.setForeground(Color.BLACK);
+        
+        lblImagen = new JLabel();
         
         footer = new JLabel("© 2025 - Tienda SLAP");
         
@@ -120,6 +122,36 @@ public class VentanaInicial extends JFrame {
         	new Bolsos(ventanaActual);
         });
         
+		Runnable r = new Runnable() {
+					
+					@Override
+					public void run() {
+						int i = 1; 
+						while(true) {
+		                    ImageIcon icon = new ImageIcon("img/Inicio/VentanaInicial" + i + ".png");
+		                    
+		                    lblImagen.setIcon(icon);
+		           
+		                    pCentro.add(lblImagen);
+		               
+		                    try {
+								Thread.sleep(1150);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+		
+		                    i++;
+		                    if (i > 4) i = 1; 
+						}
+						
+						
+						
+					}
+				};
+				
+				Thread t = new Thread(r);
+				t.start();
 
         setVisible(true);
     }
