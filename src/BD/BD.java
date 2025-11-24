@@ -3,8 +3,9 @@ package BD;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-public class BD_usuarios {
+public class BD {
 	private Connection con;
 	
 	public void initBD (String nombreBD) {
@@ -26,6 +27,20 @@ public class BD_usuarios {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void crearTablas() {
+		String sqlUsuario = "CREATE TABLE IF NOT EXISTS Usuario("
+				+"dni VARCHAR(9) PRIMARY KEY,"
+				+"nom VARCHAR(20),"
+				+"edad INTEGER)";
+		try {
+			Statement st = con.createStatement();
+			st.execute(sqlUsuario);
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }
