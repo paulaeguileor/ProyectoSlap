@@ -31,13 +31,20 @@ public class BD {
 	}
 	
 	public void crearTablas() {
-		String sqlUsuario = "CREATE TABLE IF NOT EXISTS Usuario("
-				+"dni VARCHAR(9) PRIMARY KEY,"
-				+"nom VARCHAR(20),"
-				+"edad INTEGER)";
+		String sqlUsuarios = "CREATE TABLE IF NOT EXISTS Usuarios("
+				+"nombre VARCHAR(15) PRIMARY KEY,"
+				+"email VARCHAR(30),"
+				+"telefono INTEGER),"
+				+"direccion VARCHAR(40)";
+		String sqlArticulos = "CREATE TABLE IF NOT EXISTS Articulos("
+				+"id CHAR(5) PRIMARY KEY,"
+				+"nombre VARCHAR(15),"
+				+"numCantidad INTEGER,"
+				+ "talla CHAR(1)";
 		try {
 			Statement st = con.createStatement();
-			st.execute(sqlUsuario);
+			st.execute(sqlUsuarios);
+			st.execute(sqlArticulos);
 			st.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
