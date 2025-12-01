@@ -1,67 +1,344 @@
 package BD;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import clases.*;  // Articulo, Camisa, Pantalon, Jersey, Abrigo, Vestido, Bolso, Calzado, Color
 
 public class BD {
-	private Connection con;
-	
-	public void initBD (String nombreBD) {
-		con = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection("jdbc:sqlite:" + nombreBD);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void closeBD() {
-		if (con != null) {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void crearTablas() {
-	    String sqlUsuarios = 
-	        "CREATE TABLE IF NOT EXISTS Usuarios (" +
-	        "nombre VARCHAR(15) PRIMARY KEY," +
-	        "email VARCHAR(30)," +
-	        "telefono INTEGER," +
-	        "direccion VARCHAR(40)" +
-	        ")";
 
-	    String sqlArticulos = 
-	        "CREATE TABLE IF NOT EXISTS Articulos (" +
-	        "id CHAR(5) PRIMARY KEY," +
-	        "nombre VARCHAR(15)," +
-	        "numCantidad INTEGER," +
-	        "talla CHAR(1)" +
-	        ")";
+    private Connection con;
 
-	    try {
-	        Statement st = con.createStatement();
-	        st.execute(sqlUsuarios);
-	        st.execute(sqlArticulos);
-	        st.close();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	}
+    public void initBD(String nombreBD) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            con = DriverManager.getConnection("jdbc:sqlite:" + nombreBD);
+            System.out.println("Conexión abierta a " + nombreBD);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	
-	public static void main(String[] args) {
-		BD db = new BD();
-		db.initBD("slap.db");
-		db.crearTablas();
-		db.closeBD();
-	}
+    public void closeBD() {
+        try {
+            if (con != null) {
+                con.close();
+                System.out.println("Conexión cerrada");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void crearTablas() {
+        try (Statement st = con.createStatement()) {
+
+            String sqlCamisas = "CREATE TABLE IF NOT EXISTS Camisas ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlCamisas);
+
+            String sqlPantalones = "CREATE TABLE IF NOT EXISTS Pantalones ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlPantalones);
+
+            String sqlJerseys = "CREATE TABLE IF NOT EXISTS Jerseys ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlJerseys);
+
+            String sqlAbrigos = "CREATE TABLE IF NOT EXISTS Abrigos ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlAbrigos);
+
+            String sqlVestidos = "CREATE TABLE IF NOT EXISTS Vestidos ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlVestidos);
+
+            String sqlBolsos = "CREATE TABLE IF NOT EXISTS Bolsos ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlBolsos);
+
+            String sqlCalzados = "CREATE TABLE IF NOT EXISTS Calzados ("
+                    + "codigo INTEGER PRIMARY KEY,"
+                    + "descripcion TEXT,"
+                    + "color TEXT,"
+                    + "precio REAL)";
+            st.execute(sqlCalzados);
+
+            System.out.println("Tablas creadas (si no existían)");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --------- MÉTODOS INSERTAR ---------
+
+    public void insertarCamisa(Camisa c) {
+        String sql = "INSERT OR IGNORE INTO Camisas (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, c.getCodigo());
+            ps.setString(2, c.getDesc());
+            ps.setString(3, c.getColor().name());
+            ps.setDouble(4, c.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarPantalon(Pantalon p) {
+        String sql = "INSERT OR IGNORE INTO Pantalones (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, p.getCodigo());
+            ps.setString(2, p.getDesc());
+            ps.setString(3, p.getColor().name());
+            ps.setDouble(4, p.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarJersey(Jersey j) {
+        String sql = "INSERT OR IGNORE INTO Jerseys (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, j.getCodigo());
+            ps.setString(2, j.getDesc());
+            ps.setString(3, j.getColor().name());
+            ps.setDouble(4, j.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarAbrigo(Abrigo a) {
+        String sql = "INSERT OR IGNORE INTO Abrigos (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, a.getCodigo());
+            ps.setString(2, a.getDesc());
+            ps.setString(3, a.getColor().name());
+            ps.setDouble(4, a.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarVestido(Vestido v) {
+        String sql = "INSERT OR IGNORE INTO Vestidos (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, v.getCodigo());
+            ps.setString(2, v.getDesc());
+            ps.setString(3, v.getColor().name());
+            ps.setDouble(4, v.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarBolso(Bolso b) {
+        String sql = "INSERT OR IGNORE INTO Bolsos (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, b.getCodigo());
+            ps.setString(2, b.getDesc());
+            ps.setString(3, b.getColor().name());
+            ps.setDouble(4, b.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertarCalzado(Calzado c) {
+        String sql = "INSERT OR IGNORE INTO Calzados (codigo, descripcion, color, precio) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, c.getCodigo());
+            ps.setString(2, c.getDesc());
+            ps.setString(3, c.getColor().name());
+            ps.setDouble(4, c.getPrecio());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --------- MÉTODOS CARGAR ---------
+
+    public List<Bolso> cargarBolsos() {
+        List<Bolso> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Bolsos";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Bolso b = new Bolso(codigo, descripcion, color, precio);
+                lista.add(b);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Camisa> cargarCamisas() {
+        List<Camisa> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Camisas";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Camisa c = new Camisa(codigo, descripcion, color, precio);
+                lista.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Pantalon> cargarPantalones() {
+        List<Pantalon> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Pantalones";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Pantalon p = new Pantalon(codigo, descripcion, color, precio);
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Jersey> cargarJerseys() {
+        List<Jersey> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Jerseys";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Jersey j = new Jersey(codigo, descripcion, color, precio);
+                lista.add(j);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Abrigo> cargarAbrigos() {
+        List<Abrigo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Abrigos";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Abrigo a = new Abrigo(codigo, descripcion, color, precio);
+                lista.add(a);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Vestido> cargarVestidos() {
+        List<Vestido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Vestidos";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Vestido v = new Vestido(codigo, descripcion, color, precio);
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Calzado> cargarCalzados() {
+        List<Calzado> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Calzados";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                String colorStr = rs.getString("color");
+                double precio = rs.getDouble("precio");
+
+                Color color = Color.valueOf(colorStr);
+                Calzado c = new Calzado(codigo, descripcion, color, precio);
+                lista.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
 }
+
+
+

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.*;
 
+import BD.BD;
 import clases.Bolso;
 import clases.CarritoGlobal;
 import clases.MainArticulos;
@@ -43,9 +44,12 @@ public class Bolsos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-     // --- Obtener lista de bolsos ---
-        MainArticulos mainArt = new MainArticulos();
-        List<Bolso> listaBolsos = mainArt.getListaBolsos();
+        BD bd = new BD();
+        bd.initBD("tienda.db");
+        List<Bolso> listaBolsos = bd.cargarBolsos();  
+        bd.closeBD();
+
+
         
         // --- Cargar imágenes manteniendo proporción ---
         for (Bolso bolso: listaBolsos) {

@@ -3,6 +3,8 @@ package clases;
 import java.util.ArrayList;
 import java.util.List;
 
+import BD.BD;
+
 public class MainArticulos {
 
     // Lista general de todos los artículos
@@ -23,7 +25,7 @@ public class MainArticulos {
         listaJerseis = new ArrayList<>();
         listaPantalones = new ArrayList<>();
         listaVestidos = new ArrayList<>();
-  //Camisas
+        //Camisas
   		Camisa camisa1  = new Camisa(201, "Camisa beige con pechera estampada", Color.BEIGE, 89.90);
   		Camisa camisa2  = new Camisa(202, "Camisa estampado boho tonos cálidos", Color.MULTICOLOR, 92.50);
   		Camisa camisa3  = new Camisa(203, "Camisa estampado boho en tonos tierra", Color.MULTICOLOR, 95.00);
@@ -205,6 +207,35 @@ public class MainArticulos {
   		listaCalzado.add(calzado10);
   		listaCalzado.add(calzado11);
   		listaCalzado.add(calzado12);
+  		
+  		BD bd = new BD();
+  		bd.initBD("tienda.db");
+  		bd.crearTablas();
+
+  		for (Camisa c : listaCamisas) {
+  		    bd.insertarCamisa(c);
+  		}
+  		for (Pantalon p : listaPantalones) {
+  		    bd.insertarPantalon(p);
+  		}
+  		for (Jersey j : listaJerseis) {
+  		    bd.insertarJersey(j);
+  		}
+  		for (Abrigo a : listaAbrigos) {
+  		    bd.insertarAbrigo(a);
+  		}
+  		for (Vestido v : listaVestidos) {
+  		    bd.insertarVestido(v);
+  		}
+  		for (Bolso b : listaBolsos) {
+  		    bd.insertarBolso(b);
+  		}
+  		for (Calzado c : listaCalzado) {
+  		    bd.insertarCalzado(c);
+  		}
+
+  		bd.closeBD();
+
     }
 
   	
@@ -237,6 +268,10 @@ public class MainArticulos {
         return listaVestidos;
     }
     
-
+    public static void main(String[] args) {
+        new MainArticulos();
+    }
 
 }
+
+
