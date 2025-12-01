@@ -1,10 +1,15 @@
 package ventanas;
+import java.util.List;
+
+import BD.BD;
+
 
 import java.awt.*;
 import java.util.List;
 
 import javax.swing.*;
 
+import BD.BD;
 import clases.CarritoGlobal;
 import clases.MainArticulos;
 
@@ -42,9 +47,13 @@ public class Calzado extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        MainArticulos mainArt = new MainArticulos();
-        List<clases.Calzado> listaCalzado = mainArt.getListaCalzado();
+        BD bd = new BD();
+        bd.initBD("tienda.db");
+        java.util.List<clases.Calzado> listaCalzado = bd.cargarCalzado();
+        bd.closeBD();
+
         
+
         // --- Cargar imágenes manteniendo proporción ---
         for (clases.Calzado calzado: listaCalzado) {
         	JPanel pArticulo = new JPanel(new BorderLayout());

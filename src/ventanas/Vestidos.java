@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.*;
 
+import BD.BD;
 import clases.CarritoGlobal;
 import clases.MainArticulos;
 import clases.Vestido;
@@ -43,8 +44,11 @@ public class Vestidos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        MainArticulos mainArt = new MainArticulos();
-        List<Vestido> listaVestidos = mainArt.getListaVestidos();
+        BD bd = new BD();
+        bd.initBD("tienda.db");
+        List<Vestido> listaVestidos = bd.cargarVestidos();
+        bd.closeBD();
+
         // --- Cargar imágenes manteniendo proporción ---
         for (Vestido vestido: listaVestidos) {
         	JPanel pArticulo = new JPanel(new BorderLayout());

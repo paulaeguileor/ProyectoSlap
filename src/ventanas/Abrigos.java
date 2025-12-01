@@ -3,6 +3,8 @@ package ventanas;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
+
+import BD.BD;
 import clases.Abrigo;
 import clases.MainArticulos;
 import clases.CarritoGlobal;
@@ -41,14 +43,19 @@ public class Abrigos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        // --- Obtener lista de abrigos ---
-        MainArticulos mainArt = new MainArticulos();
-        List<Abrigo> listaAbrigos = mainArt.getListaAbrigos();
+     // --- Obtener lista de abrigos desde BD ---
+        BD bd = new BD();
+        bd.initBD("tienda.db");
+        List<Abrigo> listaAbrigos = bd.cargarAbrigos();
+        bd.closeBD();
+
+        System.out.println("Abrigos en BD: " + listaAbrigos.size());
+
 
         // --- Crear panel para cada abrigo ---
         for (Abrigo abrigo : listaAbrigos) {
             JPanel pArticulo = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon("img/abrigos/abrigo" + abrigo.getCodigo() + ".png");
+            ImageIcon icon = new ImageIcon("img/chaquetas/abrigo" + abrigo.getCodigo() + ".png");
 
             // Obtener dimensiones originales
             int originalWidth = icon.getIconWidth();

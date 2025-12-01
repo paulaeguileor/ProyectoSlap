@@ -1,8 +1,15 @@
 package BD;
-
-import java.sql.*;
+//al principio de BD.java (imports necesarios)
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import clases.Calzado;
+import clases.Color;
+
+import java.sql.*;
+
 
 import clases.*;  // Articulo, Camisa, Pantalon, Jersey, Abrigo, Vestido, Bolso, Calzado, Color
 
@@ -276,6 +283,7 @@ public class BD {
     public List<Abrigo> cargarAbrigos() {
         List<Abrigo> lista = new ArrayList<>();
         String sql = "SELECT * FROM Abrigos";
+
         try (Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
@@ -289,11 +297,13 @@ public class BD {
                 Abrigo a = new Abrigo(codigo, descripcion, color, precio);
                 lista.add(a);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista;
     }
+
 
     public List<Vestido> cargarVestidos() {
         List<Vestido> lista = new ArrayList<>();
@@ -317,27 +327,33 @@ public class BD {
         return lista;
     }
 
-    public List<Calzado> cargarCalzados() {
+    public List<Calzado> cargarCalzado() {
         List<Calzado> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Calzados";
+
+        String sql = "SELECT codigo, descripcion, color, precio FROM Calzados";
+
         try (Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 int codigo = rs.getInt("codigo");
                 String descripcion = rs.getString("descripcion");
-                String colorStr = rs.getString("color");
+                String colorTxt = rs.getString("color");
                 double precio = rs.getDouble("precio");
 
-                Color color = Color.valueOf(colorStr);
-                Calzado c = new Calzado(codigo, descripcion, color, precio);
+                Color colorEnum = Color.valueOf(colorTxt);
+
+                Calzado c = new Calzado(codigo, descripcion, colorEnum, precio);
                 lista.add(c);
             }
-        } catch (SQLException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         return lista;
     }
+
 }
 
 
