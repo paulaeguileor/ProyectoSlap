@@ -40,6 +40,13 @@ public class BD {
 
     public void crearTablas() {
         try (Statement st = con.createStatement()) {
+        	
+        	String sqlUsuarios = "CREATE TABLE IF NOT EXISTS Usuarios ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "nombre TEXT UNIQUE,"
+                    + "contrasenia TEXT"
+                    + ")";
+            st.execute(sqlUsuarios);
 
             String sqlCamisas = "CREATE TABLE IF NOT EXISTS Camisas ("
                     + "codigo INTEGER PRIMARY KEY,"
@@ -98,6 +105,32 @@ public class BD {
     }
 
     // --------- MÉTODOS INSERTAR ---------
+    
+    public void insertarUsuario(String nombre, String contrasenia) {
+        String sql = "INSERT OR IGNORE INTO Usuarios (nombre, contrasenia) VALUES (?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasenia);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    //Para comprobar que existe el usuario:
+    public boolean comprobarUsuario(String nombre, String contrasenia) {
+        String sql = "SELECT * FROM Usuarios WHERE nombre = ? AND contrasenia = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasenia);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public void insertarCamisa(Camisa c) {
         String sql = "INSERT OR IGNORE INTO Camisas (codigo, descripcion, color, precio) VALUES (?,?,?,?)";

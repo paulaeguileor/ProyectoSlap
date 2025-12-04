@@ -1,6 +1,8 @@
 package ventanas;
 import javax.swing.*;
 
+import BD.BD;
+
 import java.awt.*;
 
 public class VentanaInicial extends JFrame {
@@ -13,7 +15,7 @@ public class VentanaInicial extends JFrame {
     
     private JFrame ventanaActual; 
 
-    public VentanaInicial() {
+    public VentanaInicial(BD bd) {
     	ventanaActual = this;
         setSize(1500, 600);
         setLocationRelativeTo(null);
@@ -82,7 +84,7 @@ public class VentanaInicial extends JFrame {
         //LISTENERS 
         btnUsuario.addActionListener((e)->{
         	setVisible(false);   // oculta la ventana actual
-            new InicioSesion(this);
+            new InicioSesion(this, bd);
         });
         
         
@@ -157,8 +159,12 @@ public class VentanaInicial extends JFrame {
 
     
 
-    public static void main(String[] args) {
-    	new VentanaInicial();
+    public static void main(String[] args) {    	
+    	BD bd = new BD();
+        bd.initBD("tiendaRopa.db");
+        bd.crearTablas();
+        
+        new VentanaInicial(bd);
     }
 }
 
