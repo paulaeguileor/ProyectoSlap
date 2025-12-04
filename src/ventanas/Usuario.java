@@ -126,7 +126,7 @@ public class Usuario extends JFrame {
         setVisible(true);
     }
     
-    //PERFIL
+    // PERFIL
     private void mostrarPerfilCentrado(String nombreCompleto, String direccion, String email, String telefono) {
         JPanel panelPerfilBis = new JPanel(new BorderLayout());
         panelPerfilBis.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -139,11 +139,13 @@ public class Usuario extends JFrame {
         columna.setMaximumSize(new Dimension(520, Integer.MAX_VALUE));
         columna.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Nombre
         JLabel lblNombre = etiquetaSeccion(nombreCompleto);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
         columna.add(lblNombre);
         columna.add(Box.createVerticalStrut(20));
 
+        // Bloques de info
         columna.add(bloqueInfo("DIRECCIÓN", direccion));
         columna.add(Box.createVerticalStrut(12));
         columna.add(bloqueInfo("E-MAIL", email));
@@ -151,6 +153,64 @@ public class Usuario extends JFrame {
         columna.add(bloqueInfo("TELÉFONO", telefono));
         columna.add(Box.createVerticalStrut(24));
 
+        // Botón EDITAR PERFIL
+        JButton btnEditarPerfil = new JButton("EDITAR PERFIL");
+        btnEditarPerfil.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnEditarPerfil.setFocusPainted(false);
+        btnEditarPerfil.addActionListener(ev -> {
+            // Panel del diálogo de edición
+            JPanel panelEdit = new JPanel();
+            panelEdit.setLayout(new BoxLayout(panelEdit, BoxLayout.Y_AXIS));
+            panelEdit.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+            javax.swing.JTextField txtDir = new javax.swing.JTextField(direccionMostrada, 20);
+            javax.swing.JTextField txtEmail = new javax.swing.JTextField(emailMostrado, 20);
+            javax.swing.JTextField txtTel = new javax.swing.JTextField(telefonoMostrado, 20);
+
+            panelEdit.add(new JLabel("Dirección:"));
+            panelEdit.add(txtDir);
+            panelEdit.add(Box.createVerticalStrut(8));
+            panelEdit.add(new JLabel("E-mail:"));
+            panelEdit.add(txtEmail);
+            panelEdit.add(Box.createVerticalStrut(8));
+            panelEdit.add(new JLabel("Teléfono:"));
+            panelEdit.add(txtTel);
+
+            int result = javax.swing.JOptionPane.showConfirmDialog(
+                    this,
+                    panelEdit,
+                    "Editar perfil",
+                    javax.swing.JOptionPane.OK_CANCEL_OPTION,
+                    javax.swing.JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (result == javax.swing.JOptionPane.OK_OPTION) {
+                // Actualizamos campos en memoria
+                direccionMostrada = txtDir.getText().trim();
+                emailMostrado = txtEmail.getText().trim();
+                telefonoMostrado = txtTel.getText().trim();
+
+                // Guardamos en BD
+                bd.actualizarUsuarioContacto(
+                        nombreMostrado,
+                        direccionMostrada,
+                        emailMostrado,
+                        telefonoMostrado
+                );
+
+                // Refrescamos la vista del perfil
+                mostrarPerfilCentrado(
+                        nombreMostrado,
+                        direccionMostrada,
+                        emailMostrado,
+                        telefonoMostrado
+                );
+            }
+        });
+        columna.add(btnEditarPerfil);
+        columna.add(Box.createVerticalStrut(12));
+
+        // Botón CERRAR SESIÓN
         JButton btnCerrarSesion = new JButton("CERRAR SESIÓN");
         btnCerrarSesion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnCerrarSesion.setFocusPainted(false);

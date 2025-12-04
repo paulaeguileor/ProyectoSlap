@@ -100,8 +100,6 @@ public class BD {
                     + "precio REAL)";
             st.execute(sqlCalzados);
 
-            System.out.println("Tablas creadas (si no existían)");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -156,6 +154,19 @@ public class BD {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public void actualizarUsuarioContacto(String nombre, String direccion, String email, String telefono) {
+        String sql = "UPDATE Usuarios SET direccion = ?, email = ?, telefono = ? WHERE nombre = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, direccion);
+            ps.setString(2, email);
+            ps.setString(3, telefono);
+            ps.setString(4, nombre);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void insertarCamisa(Camisa c) {
