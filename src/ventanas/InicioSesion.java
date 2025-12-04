@@ -91,12 +91,27 @@ public class InicioSesion extends JFrame{
 		        return;
 		    }
 
-		    // Si no existe en la BD, lo insertamos (lo consideramos un "registro rápido")
-		    if(!bd.comprobarUsuario(usuario, contrasenia)) {
-		        bd.insertarUsuario(usuario, contrasenia);
+		    if (bd.comprobarUsuario(usuario, contrasenia)) {
+		        // Usuario existente con contraseña correcta
+		        JOptionPane.showMessageDialog(this, "Has iniciado sesión correctamente");
+		    } else {
+		        // Intentamos registrarlo
+		        boolean registrado = bd.insertarUsuario(usuario, contrasenia);
+		        if (registrado) {
+		            JOptionPane.showMessageDialog(this, "Te has registrado e iniciado sesión correctamente");
+		        } else {
+		            // Nombre ya existe pero con otra contraseña
+		            JOptionPane.showMessageDialog(
+		                    this,
+		                    "Nombre de usuario ya existente con otra contraseña",
+		                    "ERROR",
+		                    JOptionPane.ERROR_MESSAGE);
+		            txtNombreUsuario.setText("");
+		            txtContraseniaUsuario.setText("");
+		            return;
+		        }
 		    }
 
-		    JOptionPane.showMessageDialog(this, "Has iniciado sesión correctamente");
 		    txtNombreUsuario.setText("");
 		    txtContraseniaUsuario.setText("");
 		    new Usuario(vAnterior);
@@ -104,7 +119,8 @@ public class InicioSesion extends JFrame{
 		});
 		
 		btnCierreSesion.addActionListener((e)->{
-			new VentanaInicial(bd); //Para que vuelva a la ventana Inicial / SINO se podría hace que se cerrase la aplicación entera; dispose();
+			new VentanaInicial(bd);
+			dispose();
 		});
         
         setVisible(true);

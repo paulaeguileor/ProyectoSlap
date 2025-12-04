@@ -106,15 +106,17 @@ public class BD {
 
     // --------- MÉTODOS INSERTAR ---------
     
-    public void insertarUsuario(String nombre, String contrasenia) {
+    public boolean insertarUsuario(String nombre, String contrasenia) {
         String sql = "INSERT OR IGNORE INTO Usuarios (nombre, contrasenia) VALUES (?,?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre);
             ps.setString(2, contrasenia);
-            ps.executeUpdate();
+            int filas = ps.executeUpdate();
+            return filas > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
     
     //Para comprobar que existe el usuario:
