@@ -42,11 +42,14 @@ public class BD {
         try (Statement st = con.createStatement()) {
         	
         	String sqlUsuarios = "CREATE TABLE IF NOT EXISTS Usuarios ("
-                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + "nombre TEXT UNIQUE,"
-                    + "contrasenia TEXT"
-                    + ")";
-            st.execute(sqlUsuarios);
+        	        + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        	        + "nombre TEXT UNIQUE,"
+        	        + "contrasenia TEXT,"
+        	        + "direccion TEXT,"
+        	        + "email TEXT,"
+        	        + "telefono TEXT"
+        	        + ")";
+        	st.execute(sqlUsuarios);
 
             String sqlCamisas = "CREATE TABLE IF NOT EXISTS Camisas ("
                     + "codigo INTEGER PRIMARY KEY,"
@@ -132,6 +135,27 @@ public class BD {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public UsuariosInfo cargarUsuario(String nombre) {
+        String sql = "SELECT * FROM Usuarios WHERE nombre = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String nom = rs.getString("nombre");
+                    String contrasenia = rs.getString("contrasenia");
+                    String direccion = rs.getString("direccion");
+                    String email = rs.getString("email");
+                    String telefono = rs.getString("telefono");
+                    return new UsuariosInfo(id, nom, contrasenia, direccion, email, telefono);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void insertarCamisa(Camisa c) {

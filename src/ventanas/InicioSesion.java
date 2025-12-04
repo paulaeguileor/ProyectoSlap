@@ -114,7 +114,7 @@ public class InicioSesion extends JFrame{
 
 		    txtNombreUsuario.setText("");
 		    txtContraseniaUsuario.setText("");
-		    new Usuario(vAnterior);
+		    new Usuario(vAnterior, bd, usuario);
 		    dispose();
 		});
 		

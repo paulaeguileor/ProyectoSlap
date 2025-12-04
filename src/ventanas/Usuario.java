@@ -1,4 +1,5 @@
 package ventanas;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,89 +19,118 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class Usuario extends JFrame{
-	private static final long serialVersionUID = 1L;
-	
-	private JFrame vAnterior;
+import BD.BD;
+import clases.UsuariosInfo;
 
-	//Contenido Central
-	private JPanel pCentro;
-	
-	//Haremos un panel superior (navegador) con botones para que sea más cómodo acceder a cada apartado
-	private JPanel pNav;
-	private JButton btnPerfil, btnCDs, btnCompras;
-	
-	//Mantenemos el botón de volver a la página anterior
-	private JPanel pSur;
-	private JButton btnVolver;
-	
-	private JTable tablaDirecciones;
-	private DefaultTableModel modeloTablaDirecciones;
-	//private JButton btnAniadirDir, btnEditarDir, btnDir; (IDEA)
-	
-	private JTable tablaPedidos;
-	private DefaultTableModel modeloTablaPedidos;
-	//private JButton btnDetallePedido; (IDEA)
-	
-	public Usuario(JFrame va) {
-		super();
-		vAnterior = va;
-		
-		setTitle("Mi cuenta");
-		setSize(1500, 600);
+public class Usuario extends JFrame {
+    private static final long serialVersionUID = 1L;
+    
+    private JFrame vAnterior;
+    private BD bd;
+    
+    // datos del usuario que mostraremos
+    private String nombreMostrado;
+    private String direccionMostrada;
+    private String emailMostrado;
+    private String telefonoMostrado;
+
+    //Contenido Central
+    private JPanel pCentro;
+    
+    //Navegador
+    private JPanel pNav;
+    private JButton btnPerfil, btnCDs, btnCompras;
+    
+    //Sur
+    private JPanel pSur;
+    private JButton btnVolver;
+    
+    private JTable tablaDirecciones;
+    private DefaultTableModel modeloTablaDirecciones;
+    
+    private JTable tablaPedidos;
+    private DefaultTableModel modeloTablaPedidos;
+    
+    public Usuario(JFrame va, BD bd, String nombreUsuario) {
+        super();
+        this.vAnterior = va;
+        this.bd = bd;
+        
+        setTitle("Mi cuenta");
+        setSize(1500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
         
-        //Navegador
+        // Navegador
         pNav = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         pNav.setBorder(new EmptyBorder(8, 12, 8, 12));
         btnPerfil = new JButton("Perfil");
         btnCDs = new JButton("Cambios y Devoluciones");
-        btnCompras = new JButton("Compras"); //Pdríamos hace dentro de este filtrarlo por: tienda / online (IDEA)
+        btnCompras = new JButton("Compras");
         pNav.add(btnPerfil);
         pNav.add(btnCDs);
         pNav.add(btnCompras);
         getContentPane().add(pNav, BorderLayout.NORTH);
         
-        //Contenido central
+        // Contenido central
         pCentro = new JPanel(new BorderLayout());
         pCentro.setBorder(new EmptyBorder(10, 12, 10, 12));
         getContentPane().add(pCentro, BorderLayout.CENTER);
         
-        //Contenido de la parte sur
+        // Sur
         pSur = new JPanel();
         btnVolver = new JButton("Volver");
         pSur.add(btnVolver);
         getContentPane().add(pSur, BorderLayout.SOUTH);
         
-        /* LISTENERS DE LOS BOTONES: PERFIL, CAMBIOS Y DEVOLUCIONES Y PEDIDOS. Y EL DE CERRAR SESIÓN */
-        btnPerfil.addActionListener(e -> mostrarPerfilCentrado("NOMBRE Y APELLIDOS",
-                "DIRECCIÓN",
-                "EMAIL",
-                "TELÉFONO"));
+        // Cargar datos desde BD
+        UsuariosInfo info = bd.cargarUsuario(nombreUsuario);
+
+        // valores por defecto
+        nombreMostrado = nombreUsuario;
+        direccionMostrada = "No disponible";
+        emailMostrado = "No disponible";
+        telefonoMostrado = "No disponible";
+
+        if (info != null) {
+            if (info.getNombre() != null)    nombreMostrado   = info.getNombre();
+            if (info.getDireccion() != null) direccionMostrada = info.getDireccion();
+            if (info.getEmail() != null)     emailMostrado    = info.getEmail();
+            if (info.getTelefono() != null)  telefonoMostrado = info.getTelefono();
+        }
+
+        // LISTENERS
+        btnPerfil.addActionListener(e -> mostrarPerfilCentrado(
+                nombreMostrado,
+                direccionMostrada,
+                emailMostrado,
+                telefonoMostrado
+        ));
+
         btnCompras.addActionListener(e -> mostrarCompras());
         btnCDs.addActionListener(e -> mostrarCambiosDevoluciones());
         btnVolver.addActionListener(e -> {
-        	if (vAnterior != null) vAnterior.setVisible(true);
+            if (vAnterior != null) vAnterior.setVisible(true);
             dispose();
         });
         
+        // Vista por defecto: perfil
         mostrarPerfilCentrado(
-                "NOMBRE Y APELLIDOS",
-                "DIRECCIÓN",
-                "EMAIL",
-                "TELÉFONO"
+                nombreMostrado,
+                direccionMostrada,
+                emailMostrado,
+                telefonoMostrado
         );
+        
         setVisible(true);
-	}
-	
-	//PERFIL
+    }
+    
+    //PERFIL
     private void mostrarPerfilCentrado(String nombreCompleto, String direccion, String email, String telefono) {
         JPanel panelPerfilBis = new JPanel(new BorderLayout());
         panelPerfilBis.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Contenedor centrado y estrecho
         JPanel centro = new JPanel();
         centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
         centro.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -114,7 +144,6 @@ public class Usuario extends JFrame{
         columna.add(lblNombre);
         columna.add(Box.createVerticalStrut(20));
 
-        // Bloques de info (etiqueta pequeña + valor)
         columna.add(bloqueInfo("DIRECCIÓN", direccion));
         columna.add(Box.createVerticalStrut(12));
         columna.add(bloqueInfo("E-MAIL", email));
@@ -122,7 +151,6 @@ public class Usuario extends JFrame{
         columna.add(bloqueInfo("TELÉFONO", telefono));
         columna.add(Box.createVerticalStrut(24));
 
-        // Botón Cerrar sesión en el centro
         JButton btnCerrarSesion = new JButton("CERRAR SESIÓN");
         btnCerrarSesion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnCerrarSesion.setFocusPainted(false);
@@ -132,12 +160,10 @@ public class Usuario extends JFrame{
         });
         columna.add(btnCerrarSesion);
 
-        // Centrado vertical/horizontal
         centro.add(Box.createVerticalGlue());
         centro.add(columna);
         centro.add(Box.createVerticalGlue());
 
-        //Márgenes laterales
         panelPerfilBis.add(new JPanel(), BorderLayout.WEST);
         panelPerfilBis.add(new JPanel(), BorderLayout.EAST);
         panelPerfilBis.add(centro, BorderLayout.CENTER);
@@ -182,7 +208,6 @@ public class Usuario extends JFrame{
         JLabel titulo = crearTitulo("Compras");
         pC.add(titulo, BorderLayout.NORTH);
 
-        // Modelo vacío
         modeloTablaPedidos = new DefaultTableModel(new Object[]{"Nº Pedido", "Fecha", "Estado", "Importe"}, 0);
         tablaPedidos = new JTable(modeloTablaPedidos);
         tablaPedidos.setRowHeight(24);
@@ -199,7 +224,6 @@ public class Usuario extends JFrame{
         JLabel titulo = crearTitulo("Cambios y Devoluciones");
         pCD.add(titulo, BorderLayout.NORTH);
 
-        // Modelo vacío
         modeloTablaDirecciones = new DefaultTableModel(new Object[]{"Nº Solicitud", "Fecha", "Tipo", "Estado"}, 0);
         tablaDirecciones = new JTable(modeloTablaDirecciones);
         tablaDirecciones.setRowHeight(24);
