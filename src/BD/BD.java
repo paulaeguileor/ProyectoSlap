@@ -151,8 +151,6 @@ public class BD {
                     + ")";
             st.execute(sqlSolicitudes);
 
-            System.out.println("Tablas creadas (si no existían)");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

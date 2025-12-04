@@ -46,8 +46,8 @@ public class Bolsos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        List<Bolso> listaBolsos = this.bd.cargarBolsos();  
-        
+        List<Bolso> listaBolsos = this.bd.cargarBolsos();
+
         // --- Cargar imágenes manteniendo proporción ---
         for (Bolso bolso: listaBolsos) {
         	JPanel pArticulo = new JPanel(new BorderLayout());

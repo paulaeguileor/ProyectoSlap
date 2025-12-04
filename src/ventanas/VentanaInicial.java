@@ -145,9 +145,7 @@ public class VentanaInicial extends JFrame {
 		                    i++;
 		                    if (i > 4) i = 1; 
 						}
-						
-						
-						
+		
 					}
 				};
 				
@@ -156,8 +154,6 @@ public class VentanaInicial extends JFrame {
 
         setVisible(true);
     }
-
-    
 
     public static void main(String[] args) {    	
     	BD bd = new BD();
