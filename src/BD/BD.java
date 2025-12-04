@@ -47,7 +47,8 @@ public class BD {
         	        + "contrasenia TEXT,"
         	        + "direccion TEXT,"
         	        + "email TEXT,"
-        	        + "telefono TEXT"
+        	        + "telefono TEXT,"
+        	        + "rol TEXT DEFAULT 'CLIENTE'"
         	        + ")";
         	st.execute(sqlUsuarios);
 
@@ -99,10 +100,56 @@ public class BD {
                     + "color TEXT,"
                     + "precio REAL)";
             st.execute(sqlCalzados);
+            
+            String sqlPedidos = "CREATE TABLE IF NOT EXISTS Pedidos ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "usuario TEXT,"
+                    + "fecha TEXT,"
+                    + "estado TEXT,"
+                    + "importe REAL"
+                    + ")";
+            st.execute(sqlPedidos);
+
+
+            String sqlLineas = "CREATE TABLE IF NOT EXISTS LineasPedido ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "idPedido INTEGER,"
+                    + "tipoArticulo TEXT,"
+                    + "codigoArticulo INTEGER,"
+                    + "descripcion TEXT,"
+                    + "cantidad INTEGER,"
+                    + "precioUnitario REAL,"
+                    + "subtotal REAL,"
+                    + "FOREIGN KEY(idPedido) REFERENCES Pedidos(id)"
+                    + ")";
+            st.execute(sqlLineas);
+
+            String sqlCarrito = "CREATE TABLE IF NOT EXISTS Carrito ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "usuario TEXT,"
+                    + "tipoArticulo TEXT,"
+                    + "codigoArticulo INTEGER,"
+                    + "descripcion TEXT,"
+                    + "cantidad INTEGER,"
+                    + "precioUnitario REAL"
+                    + ")";
+            st.execute(sqlCarrito);
+
+            String sqlSolicitudes = "CREATE TABLE IF NOT EXISTS Solicitudes ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "idPedido INTEGER,"
+                    + "usuario TEXT,"
+                    + "fecha TEXT,"
+                    + "tipo TEXT,"
+                    + "estado TEXT,"
+                    + "FOREIGN KEY(idPedido) REFERENCES Pedidos(id)"
+                    + ")";
+            st.execute(sqlSolicitudes);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
     }
 
     // --------- MÉTODOS INSERTAR ---------
@@ -133,6 +180,33 @@ public class BD {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public boolean esAdmin(String nombre) {
+        String sql = "SELECT rol FROM Usuarios WHERE nombre = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String rol = rs.getString("rol");
+                    return "ADMIN".equalsIgnoreCase(rol);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // Para que nosotras podeamos ser admin
+    public void hacerAdmin(String nombre) {
+        String sql = "UPDATE Usuarios SET rol = 'ADMIN' WHERE nombre = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     public UsuariosInfo cargarUsuario(String nombre) {
@@ -259,8 +333,60 @@ public class BD {
             e.printStackTrace();
         }
     }
+    
+    // Añadir línea al carrito
+    public void agregarAlCarrito(String usuario, String tipoArticulo, int codigo, String desc,
+                                 int cantidad, double precioUnitario) {
+        String sql = "INSERT INTO Carrito (usuario, tipoArticulo, codigoArticulo, descripcion, cantidad, precioUnitario) "
+                   + "VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            ps.setString(2, tipoArticulo);
+            ps.setInt(3, codigo);
+            ps.setString(4, desc);
+            ps.setInt(5, cantidad);
+            ps.setDouble(6, precioUnitario);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     // --------- MÉTODOS CARGAR ---------
+
+    // Cargar carrito de un usuario
+    public List<CarritoLinea> cargarCarrito(String usuario) {
+        List<CarritoLinea> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Carrito WHERE usuario = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String tipo = rs.getString("tipoArticulo");
+                    int cod = rs.getInt("codigoArticulo");
+                    String desc = rs.getString("descripcion");
+                    int cant = rs.getInt("cantidad");
+                    double precio = rs.getDouble("precioUnitario");
+                    lista.add(new CarritoLinea(id, usuario, tipo, cod, desc, cant, precio));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    // Vaciar carrito de un usuario
+    public void vaciarCarrito(String usuario) {
+        String sql = "DELETE FROM Carrito WHERE usuario = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public List<Bolso> cargarBolsos() {
         List<Bolso> lista = new ArrayList<>();
@@ -421,6 +547,150 @@ public class BD {
             e.printStackTrace();
         }
 
+        return lista;
+    }
+    
+    // Crea un pedido con las líneas del carrito de ese usuario
+    public int crearPedidoDesdeCarrito(String usuario) {
+        List<CarritoLinea> carrito = cargarCarrito(usuario);
+        if (carrito.isEmpty()) return -1;
+
+        double total = 0.0;
+        for (CarritoLinea c : carrito) {
+            total += c.getCantidad() * c.getPrecioUnitario();
+        }
+
+        String fecha = java.time.LocalDate.now().toString();
+        String estado = "PENDIENTE";
+
+        try {
+            con.setAutoCommit(false);  // transacción
+
+            // Insertar pedido
+            String sqlPedido = "INSERT INTO Pedidos (usuario, fecha, estado, importe) VALUES (?,?,?,?)";
+            int idPedido = -1;
+            try (PreparedStatement ps = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, usuario);
+                ps.setString(2, fecha);
+                ps.setString(3, estado);
+                ps.setDouble(4, total);
+                ps.executeUpdate();
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        idPedido = rs.getInt(1);
+                    }
+                }
+            }
+
+            // Insertar líneas
+            String sqlLinea = "INSERT INTO LineasPedido "
+                            + "(idPedido, tipoArticulo, codigoArticulo, descripcion, cantidad, precioUnitario, subtotal) "
+                            + "VALUES (?,?,?,?,?,?,?)";
+            try (PreparedStatement ps = con.prepareStatement(sqlLinea)) {
+                for (CarritoLinea c : carrito) {
+                    ps.setInt(1, idPedido);
+                    ps.setString(2, c.getTipoArticulo());
+                    ps.setInt(3, c.getCodigoArticulo());
+                    ps.setString(4, c.getDescripcion());
+                    ps.setInt(5, c.getCantidad());
+                    ps.setDouble(6, c.getPrecioUnitario());
+                    ps.setDouble(7, c.getCantidad() * c.getPrecioUnitario());
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            }
+
+            // Vaciar carrito
+            vaciarCarrito(usuario);
+
+            con.setAutoCommit(true);
+            return idPedido;
+
+        } catch (SQLException e) {
+            try { con.setAutoCommit(true); } catch (SQLException ex) {}
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
+    public List<PedidoInfo> cargarPedidosUsuario(String usuario) {
+        List<PedidoInfo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Pedidos WHERE usuario = ? ORDER BY fecha DESC";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String fecha = rs.getString("fecha");
+                    String estado = rs.getString("estado");
+                    double importe = rs.getDouble("importe");
+                    lista.add(new PedidoInfo(id, usuario, fecha, estado, importe));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<LineaPedidoInfo> cargarLineasPedido(int idPedido) {
+        List<LineaPedidoInfo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM LineasPedido WHERE idPedido = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idPedido);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String tipo = rs.getString("tipoArticulo");
+                    int codigo = rs.getInt("codigoArticulo");
+                    String desc = rs.getString("descripcion");
+                    int cant = rs.getInt("cantidad");
+                    double precio = rs.getDouble("precioUnitario");
+                    double subtotal = rs.getDouble("subtotal");
+                    lista.add(new LineaPedidoInfo(id, idPedido, tipo, codigo, desc, cant, precio, subtotal));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+    
+    public void crearSolicitud(String usuario, int idPedido, String tipo) {
+        String fecha = java.time.LocalDate.now().toString();
+        String estado = "PENDIENTE";
+        String sql = "INSERT INTO Solicitudes (idPedido, usuario, fecha, tipo, estado) VALUES (?,?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idPedido);
+            ps.setString(2, usuario);
+            ps.setString(3, fecha);
+            ps.setString(4, tipo);   // 'CAMBIO' o 'DEVOLUCION'
+            ps.setString(5, estado);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<SolicitudInfo> cargarSolicitudesUsuario(String usuario) {
+        List<SolicitudInfo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Solicitudes WHERE usuario = ? ORDER BY fecha DESC";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    int idPedido = rs.getInt("idPedido");
+                    String fecha = rs.getString("fecha");
+                    String tipo = rs.getString("tipo");
+                    String estado = rs.getString("estado");
+                    lista.add(new SolicitudInfo(id, idPedido, usuario, fecha, tipo, estado));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return lista;
     }
 

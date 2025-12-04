@@ -272,8 +272,48 @@ public class Usuario extends JFrame {
         tablaPedidos = new JTable(modeloTablaPedidos);
         tablaPedidos.setRowHeight(24);
 
+        // Cargar pedidos desde BD
+        java.util.List<clases.PedidoInfo> pedidos = bd.cargarPedidosUsuario(nombreMostrado);
+        for (clases.PedidoInfo p : pedidos) {
+            modeloTablaPedidos.addRow(new Object[]{
+                    p.getId(),
+                    p.getFecha(),
+                    p.getEstado(),
+                    p.getImporte()
+            });
+        }
+
+        // Botón para ver detalle
+        JButton btnDetalle = new JButton("Ver detalle pedido");
+        btnDetalle.addActionListener(e -> {
+            int fila = tablaPedidos.getSelectedRow();
+            if (fila >= 0) {
+                int idPedido = (int) modeloTablaPedidos.getValueAt(fila, 0);
+                java.util.List<clases.LineaPedidoInfo> lineas = bd.cargarLineasPedido(idPedido);
+
+                StringBuilder sb = new StringBuilder();
+                for (clases.LineaPedidoInfo l : lineas) {
+                    sb.append(l.getTipoArticulo())
+                      .append(" - ")
+                      .append(l.getDescripcion())
+                      .append(" x")
+                      .append(l.getCantidad())
+                      .append("  = ")
+                      .append(l.getSubtotal())
+                      .append("\n");
+                }
+                javax.swing.JOptionPane.showMessageDialog(this, sb.toString(), 
+                        "Detalle pedido " + idPedido,
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        JPanel pSurTabla = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pSurTabla.add(btnDetalle);
+
         JScrollPane scroll = new JScrollPane(tablaPedidos);
         pC.add(scroll, BorderLayout.CENTER);
+        pC.add(pSurTabla, BorderLayout.SOUTH);
 
         setCentro(pC);
     }
@@ -284,9 +324,21 @@ public class Usuario extends JFrame {
         JLabel titulo = crearTitulo("Cambios y Devoluciones");
         pCD.add(titulo, BorderLayout.NORTH);
 
-        modeloTablaDirecciones = new DefaultTableModel(new Object[]{"Nº Solicitud", "Fecha", "Tipo", "Estado"}, 0);
+        modeloTablaDirecciones = new DefaultTableModel(
+                new Object[]{"Nº Solicitud", "Nº Pedido", "Fecha", "Tipo", "Estado"}, 0);
         tablaDirecciones = new JTable(modeloTablaDirecciones);
         tablaDirecciones.setRowHeight(24);
+
+        java.util.List<clases.SolicitudInfo> solicitudes = bd.cargarSolicitudesUsuario(nombreMostrado);
+        for (clases.SolicitudInfo s : solicitudes) {
+            modeloTablaDirecciones.addRow(new Object[]{
+                    s.getId(),
+                    s.getIdPedido(),
+                    s.getFecha(),
+                    s.getTipo(),
+                    s.getEstado()
+            });
+        }
 
         JScrollPane scroll = new JScrollPane(tablaDirecciones);
         pCD.add(scroll, BorderLayout.CENTER);
