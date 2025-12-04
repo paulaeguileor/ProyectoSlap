@@ -16,13 +16,15 @@ public class Abrigos extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Abrigos(JFrame va) {
+    public Abrigos(JFrame va, BD bd) {
         super("Abrigos");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
-     // --- Configuración básica de la ventana ---
+        // --- Configuración básica de la ventana ---
         setSize(1200, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -43,14 +45,7 @@ public class Abrigos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-     // --- Obtener lista de abrigos desde BD ---
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        List<Abrigo> listaAbrigos = bd.cargarAbrigos();
-        bd.closeBD();
-
-        System.out.println("Abrigos en BD: " + listaAbrigos.size());
-
+        List<Abrigo> listaAbrigos = this.bd.cargarAbrigos();
 
         // --- Crear panel para cada abrigo ---
         for (Abrigo abrigo : listaAbrigos) {

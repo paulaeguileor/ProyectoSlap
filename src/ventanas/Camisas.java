@@ -18,11 +18,13 @@ public class Camisas extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Camisas(JFrame va) {
+    public Camisas(JFrame va, BD bd) {
         super("Camisas");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
         // --- Configuración básica de la ventana ---
         setSize(1200, 700);
@@ -45,12 +47,8 @@ public class Camisas extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        List<Camisa> listaCamisas = bd.cargarCamisas();
-        bd.closeBD();
-
-        
+        List<Camisa> listaCamisas = this.bd.cargarCamisas();
+      
         // --- Cargar imágenes manteniendo proporción ---
         for (Camisa camisa: listaCamisas) {
         	JPanel pArticulo = new JPanel(new BorderLayout());

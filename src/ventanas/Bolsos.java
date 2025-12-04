@@ -17,11 +17,13 @@ public class Bolsos extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Bolsos(JFrame va) {
+    public Bolsos(JFrame va, BD bd) {
         super("Bolsos");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
         // --- Configuración básica de la ventana ---
         setSize(1200, 700);
@@ -44,12 +46,7 @@ public class Bolsos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        List<Bolso> listaBolsos = bd.cargarBolsos();  
-        bd.closeBD();
-
-
+        List<Bolso> listaBolsos = this.bd.cargarBolsos();  
         
         // --- Cargar imágenes manteniendo proporción ---
         for (Bolso bolso: listaBolsos) {

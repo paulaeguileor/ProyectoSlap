@@ -17,11 +17,13 @@ public class Jerseis extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Jerseis(JFrame va) {
+    public Jerseis(JFrame va, BD bd) {
         super("Jerseis");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
         // --- Configuración básica de la ventana ---
         setSize(1200, 700);
@@ -44,10 +46,7 @@ public class Jerseis extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        List<Jersey> listaJerseis = bd.cargarJerseys();
-        bd.closeBD();
+        List<Jersey> listaJerseis = this.bd.cargarJerseys();
 
         // --- Cargar imágenes manteniendo proporción ---
         for (Jersey jersey: listaJerseis) {

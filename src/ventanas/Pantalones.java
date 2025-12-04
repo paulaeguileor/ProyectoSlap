@@ -17,11 +17,13 @@ public class Pantalones extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Pantalones(JFrame va) {
+    public Pantalones(JFrame va, BD bd) {
         super("Pantalones");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
         // --- Configuración básica de la ventana ---
         setSize(1200, 700);
@@ -44,12 +46,8 @@ public class Pantalones extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
 
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        List<Pantalon> listaPantalones = bd.cargarPantalones();
-        bd.closeBD();
+        List<Pantalon> listaPantalones = this.bd.cargarPantalones();
 
-        
         // --- Cargar imágenes manteniendo proporción ---
         for (Pantalon pantalon: listaPantalones) {
         	JPanel pArticulo = new JPanel(new BorderLayout());

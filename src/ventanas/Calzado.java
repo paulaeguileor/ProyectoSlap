@@ -20,11 +20,13 @@ public class Calzado extends JFrame {
     private JPanel pSur, pCentro;
     private JButton btnVolver;
     private JScrollPane scrollPane;
+    private BD bd;
 
-    public Calzado(JFrame va) {
+    public Calzado(JFrame va, BD bd) {
         super("Calzado");
         vActual = this;
         vAnterior = va;
+        this.bd = bd;
 
         // --- Configuración básica de la ventana ---
         setSize(1200, 700);
@@ -46,13 +48,8 @@ public class Calzado extends JFrame {
         pCentro = new JPanel(new GridLayout(4, 3, 10, 10));
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // margen lateral
-
-        BD bd = new BD();
-        bd.initBD("tienda.db");
-        java.util.List<clases.Calzado> listaCalzado = bd.cargarCalzado();
-        bd.closeBD();
-
         
+        java.util.List<clases.Calzado> listaCalzado = this.bd.cargarCalzado();
 
         // --- Cargar imágenes manteniendo proporción ---
         for (clases.Calzado calzado: listaCalzado) {

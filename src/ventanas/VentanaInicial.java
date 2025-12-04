@@ -90,37 +90,37 @@ public class VentanaInicial extends JFrame {
         
         btnCarrito.addActionListener(e -> {
             ventanaActual.setVisible(false);
-            new VentanaCarrito(ventanaActual); // ya no hace falta pasar el carrito
+            new VentanaCarrito(ventanaActual, bd);
         });
 
         btnCamisas.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Camisas(ventanaActual);
+        	new Camisas(ventanaActual, bd);
         });
         
         btnJerseis.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Jerseis(ventanaActual);
+        	new Jerseis(ventanaActual, bd);
         });
         btnAbrigos.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Abrigos(ventanaActual);
+        	new Abrigos(ventanaActual, bd);
         });
         btnVestidos.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Vestidos(ventanaActual);
+        	new Vestidos(ventanaActual, bd);
         });
         btnPantalones.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Pantalones(ventanaActual);
+        	new Pantalones(ventanaActual, bd);
         });
         btnCalzado.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Calzado(ventanaActual);
+        	new Calzado(ventanaActual, bd);
         });
         btnBolsos.addActionListener((e)->{
         	ventanaActual.setVisible(false);
-        	new Bolsos(ventanaActual);
+        	new Bolsos(ventanaActual, bd);
         });
         
 		Runnable r = new Runnable() {
@@ -161,7 +161,7 @@ public class VentanaInicial extends JFrame {
 
     public static void main(String[] args) {    	
     	BD bd = new BD();
-        bd.initBD("tiendaRopa.db");
+        bd.initBD("tienda.db");
         bd.crearTablas();
         
         new VentanaInicial(bd);

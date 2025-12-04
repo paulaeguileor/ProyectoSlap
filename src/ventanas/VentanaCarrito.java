@@ -3,8 +3,10 @@ package ventanas;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 
+import BD.BD;
 import clases.Articulo;
 import clases.CarritoGlobal;
+import clases.Sesion;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -23,10 +25,13 @@ public class VentanaCarrito extends JFrame {
 
     private int fila = -1;
 
-    public VentanaCarrito(JFrame vAnterior) {
+    private BD bd;
+
+    public VentanaCarrito(JFrame vAnterior, BD bd) {
         super("Carrito");
         this.vActual = this;
         this.vAnterior = vAnterior;
+        this.bd = bd;
 
         setSize(1200, 600);
         setLocationRelativeTo(null);
@@ -92,7 +97,7 @@ public class VentanaCarrito extends JFrame {
                 modelo.fireTableDataChanged();
                 actualizarTotales();
             } else {
-                JOptionPane.showMessageDialog(null, "Selecciona un artículo para eliminar");
+                JOptionPane.showMessageDialog(this, "Selecciona un artículo para eliminar");
             }
         });
 
@@ -101,14 +106,73 @@ public class VentanaCarrito extends JFrame {
             CarritoGlobal.clear();
             modelo.fireTableDataChanged();
             actualizarTotales();
+
+            if (Sesion.usuarioActual != null) {
+                bd.vaciarCarrito(Sesion.usuarioActual);
+            }
         });
 
-        // Botón finalizar
+        // Botón finalizar COMPRA (con BD)
         btnFinalizar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "¡Tu compra se ha realizado con éxito!");
-            CarritoGlobal.clear();
-            modelo.fireTableDataChanged();
-            actualizarTotales();
+            // 1) Comprobar login
+            if (Sesion.usuarioActual == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Debes iniciar sesión para finalizar la compra",
+                        "Atención",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            String usuario = Sesion.usuarioActual;
+
+            // 2) Obtener artículos del carrito global
+            List<Articulo> listaArticulos = CarritoGlobal.getArticulos();
+            if (listaArticulos.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El carrito está vacío",
+                        "Atención",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                return;
+            }
+
+            // 3) Volcar carrito global a la tabla Carrito de la BD
+            bd.vaciarCarrito(usuario);  // limpiamos lo anterior por si acaso
+
+            for (Articulo a : listaArticulos) {
+                String tipo = a.getClass().getSimpleName();
+                int codigo = a.getCodigo();
+                String desc = a.getDesc();
+                int cantidad = 1;  // ahora mismo siempre 1
+                double precio = a.getPrecio();
+
+                bd.agregarAlCarrito(usuario, tipo, codigo, desc, cantidad, precio);
+            }
+
+            // 4) Crear pedido desde el carrito BD
+            int idPedido = bd.crearPedidoDesdeCarrito(usuario);
+
+            if (idPedido != -1) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "¡Tu compra se ha realizado con éxito!\nNº de pedido: " + idPedido,
+                        "Compra realizada",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                CarritoGlobal.clear();
+                modelo.fireTableDataChanged();
+                actualizarTotales();
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No se ha podido realizar la compra",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         });
 
         // Tabla render
