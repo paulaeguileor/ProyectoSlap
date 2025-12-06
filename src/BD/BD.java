@@ -150,6 +150,16 @@ public class BD {
                     + "FOREIGN KEY(idPedido) REFERENCES Pedidos(id)"
                     + ")";
             st.execute(sqlSolicitudes);
+         
+            // ---------- STOCK / INVENTARIO ----------
+            String sqlStock = "CREATE TABLE IF NOT EXISTS Stock ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "tipoArticulo TEXT,"  // Por ejemplo: 'Camisas', 'Pantalones'
+                    + "codigoArticulo INTEGER,"
+                    + "talla TEXT,"        // 'S', 'M', 'L' o '38', '40'
+                    + "cantidad INTEGER"   // Cantidad en stock
+                    + ")";
+            st.execute(sqlStock);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -713,7 +723,347 @@ public class BD {
         }
         return lista;
     }
+    
+    // GESTIÓN DEL CARRITO
+    
+    // Eliminar una línea específica del carrito
+    public boolean eliminarLineaCarrito(int idLinea) {
+        String sql = "DELETE FROM Carrito WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idLinea);
+            int filas = ps.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+   
+    //MÉTODOS PARA ACTUALIZAR ARTÍCULOS (ADMIN)
+    
+    // Actualizar Camisa
+    public boolean actualizarCamisa(Camisa c) {
+        String sql = "UPDATE Camisas SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, c.getDesc());
+            ps.setString(2, c.getColor().name());
+            ps.setDouble(3, c.getPrecio());
+            ps.setInt(4, c.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
+    // Actualizar Pantalon (talla es int)
+    public boolean actualizarPantalon(Pantalon p) {
+        String sql = "UPDATE Pantalones SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, p.getDesc());
+            ps.setString(2, p.getColor().name());
+            ps.setDouble(3, p.getPrecio());
+            ps.setInt(4, p.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Actualizar Jersey (talla es TallaLetra)
+    public boolean actualizarJersey(Jersey j) {
+        String sql = "UPDATE Jerseys SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, j.getDesc());
+            ps.setString(2, j.getColor().name());
+            ps.setDouble(3, j.getPrecio());
+            ps.setInt(4, j.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Actualizar Abrigo (talla es TallaLetra)
+    public boolean actualizarAbrigo(Abrigo a) {
+        String sql = "UPDATE Abrigos SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, a.getDesc());
+            ps.setString(2, a.getColor().name());
+            ps.setDouble(3, a.getPrecio());
+            ps.setInt(4, a.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Actualizar Vestido (talla es TallaLetra)
+    public boolean actualizarVestido(Vestido v) {
+        String sql = "UPDATE Vestidos SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, v.getDesc());
+            ps.setString(2, v.getColor().name());
+            ps.setDouble(3, v.getPrecio());
+            ps.setInt(4, v.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Actualizar Bolso (solo Articulo)
+    public boolean actualizarBolso(Bolso b) {
+        String sql = "UPDATE Bolsos SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, b.getDesc());
+            ps.setString(2, b.getColor().name());
+            ps.setDouble(3, b.getPrecio());
+            ps.setInt(4, b.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Actualizar Calzado (talla es int)
+    public boolean actualizarCalzado(Calzado c) {
+        String sql = "UPDATE Calzados SET descripcion = ?, color = ?, precio = ? WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, c.getDesc());
+            ps.setString(2, c.getColor().name());
+            ps.setDouble(3, c.getPrecio());
+            ps.setInt(4, c.getCodigo());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // MÉTODOS PARA ELIMINAR ARTÍCULOS (ADMIN)
+    
+    // Eliminar Camisa por código
+    public boolean eliminarCamisa(int codigo) {
+        String sql = "DELETE FROM Camisas WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Pantalon por código
+    public boolean eliminarPantalon(int codigo) {
+        String sql = "DELETE FROM Pantalones WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Jersey por código
+    public boolean eliminarJersey(int codigo) {
+        String sql = "DELETE FROM Jerseys WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Abrigo por código
+    public boolean eliminarAbrigo(int codigo) {
+        String sql = "DELETE FROM Abrigos WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Vestido por código
+    public boolean eliminarVestido(int codigo) {
+        String sql = "DELETE FROM Vestidos WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Bolso por código
+    public boolean eliminarBolso(int codigo) {
+        String sql = "DELETE FROM Bolsos WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Eliminar Calzado por código
+    public boolean eliminarCalzado(int codigo) {
+        String sql = "DELETE FROM Calzados WHERE codigo = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    //GESTIÓN DE PEDIDOS EN ADMIN
+    
+    // Cargar TODOS los pedidos (para ADMIN)
+    public List<PedidoInfo> cargarTodosPedidos() {
+        List<PedidoInfo> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM Pedidos ORDER BY fecha DESC";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                lista.add(new PedidoInfo(
+                        rs.getInt("id"),
+                        rs.getString("usuario"),
+                        rs.getString("fecha"),
+                        rs.getString("estado"),
+                        rs.getDouble("importe")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+    
+    // Actualizar estado de un pedido (para ADMIN)
+    public boolean actualizarEstadoPedido(int idPedido, String nuevoEstado) {
+        // Ejemplo de estados: ENVIADO, ENTREGADO, CANCELADO
+        String sql = "UPDATE Pedidos SET estado = ? WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idPedido);
+            int filas = ps.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    //GESTIÓN DE SOLICITUDES EN ADMIN
+    
+    // Cargar TODAS las solicitudes (para ADMIN)
+    public List<SolicitudInfo> cargarTodasSolicitudes() {
+        List<SolicitudInfo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Solicitudes ORDER BY fecha DESC";
+        try (Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int idPedido = rs.getInt("idPedido");
+                String usuario = rs.getString("usuario");
+                String fecha = rs.getString("fecha");
+                String tipo = rs.getString("tipo");
+                String estado = rs.getString("estado");
+                lista.add(new SolicitudInfo(id, idPedido, usuario, fecha, tipo, estado));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+    
+    // Actualizar estado de una solicitud (para ADMIN)
+    public boolean actualizarEstadoSolicitud(int idSolicitud, String nuevoEstado) {
+        // Ejemplo de estados: ACEPTADO, RECHAZADO, PROCESANDO
+        String sql = "UPDATE Solicitudes SET estado = ? WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idSolicitud);
+            int filas = ps.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+ 
+    //GESTION DE STOCK (ADMIN)
+    
+    // Añadir o actualizar stock (para ADMIN)
+    public void actualizarStock(String tipoArticulo, int codigoArticulo, String talla, int cantidad) {
+        String sql = "INSERT OR REPLACE INTO Stock (tipoArticulo, codigoArticulo, talla, cantidad) "
+                   + "VALUES (?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, tipoArticulo);
+            ps.setInt(2, codigoArticulo);
+            ps.setString(3, talla);
+            ps.setInt(4, cantidad);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Eliminar una talla específica de stock (por ejemplo, si se descataloga)
+    public boolean eliminarStockTalla(String tipoArticulo, int codigoArticulo, String talla) {
+        String sql = "DELETE FROM Stock WHERE tipoArticulo = ? AND codigoArticulo = ? AND talla = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, tipoArticulo);
+            ps.setInt(2, codigoArticulo);
+            ps.setString(3, talla);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //CONSULTAS DE STOCK (CLIENTE/GENERAL)
+    
+    // Consultar el stock disponible para una talla específica
+    public int obtenerStock(String tipoArticulo, int codigoArticulo, String talla) {
+        String sql = "SELECT cantidad FROM Stock WHERE tipoArticulo = ? AND codigoArticulo = ? AND talla = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, tipoArticulo);
+            ps.setInt(2, codigoArticulo);
+            ps.setString(3, talla);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cantidad");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // 0 si no encuentra o hay error
+    }
+    
 }
 
 
