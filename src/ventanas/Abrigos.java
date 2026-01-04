@@ -46,6 +46,7 @@ public class Abrigos extends JFrame {
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
         List<Abrigo> listaAbrigos = this.bd.cargarAbrigos();
+        System.out.println("Abrigos cargados: " + listaAbrigos.size());
 
         // --- Crear panel para cada abrigo ---
         for (Abrigo abrigo : listaAbrigos) {
