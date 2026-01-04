@@ -25,7 +25,7 @@ public class Abrigos extends JFrame {
         this.bd = bd;
 
         // --- Configuración básica de la ventana ---
-        setSize(1200, 700);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());

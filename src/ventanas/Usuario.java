@@ -57,7 +57,7 @@ public class Usuario extends JFrame {
         this.bd = bd;
         
         setTitle("Mi cuenta");
-        setSize(1500, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
@@ -191,20 +191,42 @@ public class Usuario extends JFrame {
                 telefonoMostrado = txtTel.getText().trim();
 
                 // Guardamos en BD
-                bd.actualizarUsuarioContacto(
+                if (!emailMostrado.isEmpty() && (!emailMostrado.contains("@") || !emailMostrado.contains("."))) {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "Email no válido.",
+                            "Error",
+                            javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!telefonoMostrado.isEmpty() && !telefonoMostrado.matches("\\d+")) {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "El teléfono solo puede contener números.",
+                            "Error",
+                            javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean ok = bd.actualizarUsuarioContacto(
                         nombreMostrado,
                         direccionMostrada,
                         emailMostrado,
                         telefonoMostrado
                 );
 
-                // Refrescamos la vista del perfil
-                mostrarPerfilCentrado(
-                        nombreMostrado,
-                        direccionMostrada,
-                        emailMostrado,
-                        telefonoMostrado
-                );
+                if (ok) {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "Datos actualizados correctamente.",
+                            "Guardado",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                    mostrarPerfilCentrado(nombreMostrado, direccionMostrada, emailMostrado, telefonoMostrado);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "No se han podido guardar los cambios. Inténtalo de nuevo.",
+                            "Error al guardar",
+                            javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
         columna.add(btnEditarPerfil);
@@ -215,6 +237,13 @@ public class Usuario extends JFrame {
         btnCerrarSesion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnCerrarSesion.setFocusPainted(false);
         btnCerrarSesion.addActionListener(e -> {
+        	clases.Sesion.cerrarSesion();
+
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Has cerrado sesión correctamente.",
+                    "Sesión cerrada",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
             if (vAnterior != null) vAnterior.setVisible(true);
             dispose();
         });

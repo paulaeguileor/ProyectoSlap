@@ -33,7 +33,7 @@ public class VentanaCarrito extends JFrame {
         this.vAnterior = vAnterior;
         this.bd = bd;
 
-        setSize(1200, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());

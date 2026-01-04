@@ -181,6 +181,26 @@ public class BD {
         return false;
     }
     
+    public boolean insertarUsuarioCompleto(String nombre, String contrasenia,
+            String direccion, String email, String telefono) {
+        String sql = "INSERT INTO Usuarios (nombre, contrasenia, direccion, email, telefono) VALUES (?,?,?,?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasenia);
+            ps.setString(3, direccion);
+            ps.setString(4, email);
+            ps.setString(5, telefono);
+            int filas = ps.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("unique")) {
+                return false;
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     //Para comprobar que existe el usuario:
     public boolean comprobarUsuario(String nombre, String contrasenia) {
         String sql = "SELECT * FROM Usuarios WHERE nombre = ? AND contrasenia = ?";
@@ -244,16 +264,18 @@ public class BD {
         return null;
     }
     
-    public void actualizarUsuarioContacto(String nombre, String direccion, String email, String telefono) {
+    public boolean actualizarUsuarioContacto(String nombre, String direccion, String email, String telefono) {
         String sql = "UPDATE Usuarios SET direccion = ?, email = ?, telefono = ? WHERE nombre = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, direccion);
             ps.setString(2, email);
             ps.setString(3, telefono);
             ps.setString(4, nombre);
-            ps.executeUpdate();
+            int filas = ps.executeUpdate();
+            return filas > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
