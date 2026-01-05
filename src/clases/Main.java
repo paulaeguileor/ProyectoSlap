@@ -19,6 +19,9 @@ public class Main {
                 MainArticulos ma = new MainArticulos();
                 ma.rellenarBD(bd);
             }
+            
+            bd.insertarUsuario("admin", "admin");
+            bd.hacerAdmin("admin");
 
             new VentanaInicial(bd);
         });

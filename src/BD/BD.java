@@ -996,6 +996,18 @@ public class BD {
     }
     
     //GESTIÓN DE SOLICITUDES EN ADMIN
+    public boolean existeSolicitudActiva(int idPedido) {
+        String sql = "SELECT 1 FROM Solicitudes WHERE idPedido = ? AND estado IN ('PENDIENTE','PROCESANDO') LIMIT 1";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idPedido);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     
     // Cargar TODAS las solicitudes (para ADMIN)
     public List<SolicitudInfo> cargarTodasSolicitudes() {
