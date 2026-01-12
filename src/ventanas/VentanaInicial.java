@@ -203,4 +203,5 @@ public class VentanaInicial extends JFrame {
         lblImagen.setIcon(new ImageIcon(imgEscalada));
     }
 
+
 }

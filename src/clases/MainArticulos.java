@@ -123,17 +123,213 @@ public class MainArticulos {
         listaCalzado.add(new Calzado(812, "Sandalia tacón negra", Color.NEGRO, 250.00));
     }
 
+    // =========================================================
+    // ===================== RECURSIVIDAD =======================
+    // =========================================================
+
+    /**
+     * Antes era un montón de for() seguidos.
+     * Ahora, la inserción en BD se hace con recursividad:
+     *  - Recorre categorías (lista de listas) de forma recursiva
+     *  - Dentro de cada categoría recorre sus artículos también recursivo
+     */
     public void rellenarBD(BD bd) {
-        for (Camisa c : listaCamisas) bd.insertarCamisa(c);
-        for (Pantalon p : listaPantalones) bd.insertarPantalon(p);
-        for (Jersey j : listaJerseis) bd.insertarJersey(j);
-        for (Abrigo a : listaAbrigos) bd.insertarAbrigo(a);
-        for (Vestido v : listaVestidos) bd.insertarVestido(v);
-        for (Bolso b : listaBolsos) bd.insertarBolso(b);
-        for (Calzado c : listaCalzado) bd.insertarCalzado(c);
+        List<List<? extends Articulo>> categorias = getCategoriasComoListas();
+        insertarCategoriasRecursivo(bd, categorias, 0);
     }
 
-    // Getters si los necesitas
+    /** Devuelve todas las categorías como una lista de listas (para poder recorrerlas recursivamente). */
+    private List<List<? extends Articulo>> getCategoriasComoListas() {
+        List<List<? extends Articulo>> categorias = new ArrayList<>();
+        categorias.add(listaCamisas);
+        categorias.add(listaPantalones);
+        categorias.add(listaJerseis);
+        categorias.add(listaAbrigos);
+        categorias.add(listaVestidos);
+        categorias.add(listaBolsos);
+        categorias.add(listaCalzado);
+        return categorias;
+    }
+
+    /** Recorre categorías de forma recursiva (una categoría por llamada). */
+    private void insertarCategoriasRecursivo(BD bd, List<List<? extends Articulo>> categorias, int indiceCategoria) {
+        if (bd == null) return;
+        if (categorias == null) return;
+
+        // Caso base: no quedan categorías
+        if (indiceCategoria >= categorias.size()) {
+            return;
+        }
+
+        // Insertar todos los artículos de esta categoría (también recursivo)
+        List<? extends Articulo> categoriaActual = categorias.get(indiceCategoria);
+        insertarArticulosDeUnaCategoriaRecursivo(bd, categoriaActual, 0);
+
+        // Llamada recursiva: siguiente categoría
+        insertarCategoriasRecursivo(bd, categorias, indiceCategoria + 1);
+    }
+
+    /** Recorre los artículos de una categoría (lista) de forma recursiva. */
+    private void insertarArticulosDeUnaCategoriaRecursivo(BD bd, List<? extends Articulo> categoria, int indiceArticulo) {
+        if (categoria == null) return;
+
+        // Caso base: fin de la lista
+        if (indiceArticulo >= categoria.size()) {
+            return;
+        }
+
+        Articulo a = categoria.get(indiceArticulo);
+        insertarArticuloEnBD(bd, a);
+
+        // Llamada recursiva: siguiente artículo
+        insertarArticulosDeUnaCategoriaRecursivo(bd, categoria, indiceArticulo + 1);
+    }
+
+    /**
+     * Inserta un artículo en su tabla correcta. (No es recursivo, pero lo usamos dentro de la recursión)
+     * Deja el código muy largo (a propósito) y clarito para el profe.
+     */
+    private void insertarArticuloEnBD(BD bd, Articulo a) {
+        if (bd == null || a == null) return;
+
+        if (a instanceof Camisa) {
+            bd.insertarCamisa((Camisa) a);
+            return;
+        }
+
+        if (a instanceof Pantalon) {
+            bd.insertarPantalon((Pantalon) a);
+            return;
+        }
+
+        if (a instanceof Jersey) {
+            bd.insertarJersey((Jersey) a);
+            return;
+        }
+
+        if (a instanceof Abrigo) {
+            bd.insertarAbrigo((Abrigo) a);
+            return;
+        }
+
+        if (a instanceof Vestido) {
+            bd.insertarVestido((Vestido) a);
+            return;
+        }
+
+        if (a instanceof Bolso) {
+            bd.insertarBolso((Bolso) a);
+            return;
+        }
+
+        if (a instanceof Calzado) {
+            bd.insertarCalzado((Calzado) a);
+            return;
+        }
+    }
+
+    // -------------------- BÚSQUEDA RECURSIVA --------------------
+
+    /** Busca un artículo por código recorriendo TODAS las categorías de forma recursiva. */
+    public Articulo buscarPorCodigoRecursivo(int codigo) {
+        List<List<? extends Articulo>> categorias = getCategoriasComoListas();
+        return buscarEnCategoriasRecursivo(categorias, 0, codigo);
+    }
+
+    private Articulo buscarEnCategoriasRecursivo(List<List<? extends Articulo>> categorias, int indiceCategoria, int codigo) {
+        if (categorias == null) return null;
+
+        // Caso base: no quedan categorías
+        if (indiceCategoria >= categorias.size()) {
+            return null;
+        }
+
+        // Buscar en la categoría actual
+        Articulo encontrado = buscarEnListaRecursivo(categorias.get(indiceCategoria), 0, codigo);
+        if (encontrado != null) {
+            return encontrado;
+        }
+
+        // Si no está, buscar en la siguiente categoría
+        return buscarEnCategoriasRecursivo(categorias, indiceCategoria + 1, codigo);
+    }
+
+    private Articulo buscarEnListaRecursivo(List<? extends Articulo> lista, int indice, int codigo) {
+        if (lista == null) return null;
+
+        // Caso base
+        if (indice >= lista.size()) {
+            return null;
+        }
+
+        Articulo actual = lista.get(indice);
+        if (actual != null && actual.getCodigo() == codigo) {
+            return actual;
+        }
+
+        return buscarEnListaRecursivo(lista, indice + 1, codigo);
+    }
+
+    // -------------------- LISTADO RECURSIVO (STRING) --------------------
+
+    /** Genera un listado “bonito” del catálogo usando recursividad (para demostrarla aún más). */
+    public String catalogoComoTextoRecursivo() {
+        List<List<? extends Articulo>> categorias = getCategoriasComoListas();
+        StringBuilder sb = new StringBuilder();
+        construirCatalogoTextoRecursivo(categorias, 0, sb);
+        return sb.toString();
+    }
+
+    private void construirCatalogoTextoRecursivo(List<List<? extends Articulo>> categorias, int indiceCategoria, StringBuilder sb) {
+        if (categorias == null || sb == null) return;
+
+        if (indiceCategoria >= categorias.size()) {
+            return;
+        }
+
+        // Título de categoría según índice (manual, largo y explícito)
+        sb.append("=== CATEGORÍA ").append(indiceCategoria + 1).append(" ===").append("\n");
+        if (indiceCategoria == 0) sb.append("Camisas\n");
+        if (indiceCategoria == 1) sb.append("Pantalones\n");
+        if (indiceCategoria == 2) sb.append("Jerséis\n");
+        if (indiceCategoria == 3) sb.append("Abrigos\n");
+        if (indiceCategoria == 4) sb.append("Vestidos\n");
+        if (indiceCategoria == 5) sb.append("Bolsos\n");
+        if (indiceCategoria == 6) sb.append("Calzado\n");
+
+        // Listar artículos de esa categoría (recursivo)
+        construirCategoriaTextoRecursivo(categorias.get(indiceCategoria), 0, sb);
+
+        sb.append("\n");
+        construirCatalogoTextoRecursivo(categorias, indiceCategoria + 1, sb);
+    }
+
+    private void construirCategoriaTextoRecursivo(List<? extends Articulo> lista, int indice, StringBuilder sb) {
+        if (lista == null || sb == null) return;
+
+        if (indice >= lista.size()) {
+            return;
+        }
+
+        Articulo a = lista.get(indice);
+        if (a != null) {
+            sb.append(" - ")
+              .append(a.getCodigo())
+              .append(" | ")
+              .append(a.getDesc())
+              .append(" | ")
+              .append(a.getColor())
+              .append(" | ")
+              .append(a.getPrecio())
+              .append("\n");
+        }
+
+        construirCategoriaTextoRecursivo(lista, indice + 1, sb);
+    }
+
+    // =========================================================
+    // ======================== GETTERS =========================
+    // =========================================================
     public List<Abrigo> getListaAbrigos() { return listaAbrigos; }
     public List<Bolso> getListaBolsos() { return listaBolsos; }
     public List<Calzado> getListaCalzado() { return listaCalzado; }
@@ -142,3 +338,4 @@ public class MainArticulos {
     public List<Pantalon> getListaPantalones() { return listaPantalones; }
     public List<Vestido> getListaVestidos() { return listaVestidos; }
 }
+
