@@ -3,14 +3,8 @@ package clases;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Clase "de demostración" de recursividad para el proyecto SLAP.
- * - Muchas funciones recursivas (listas, strings, números)
- * - Algunas se usan desde Main (autoTest) para que CUENTE como ejecutado.
- *
- * Nota: Está escrita "larga" a propósito (para sumar líneas y que el profe
- * vea recursividad por todos lados).
- */
+
+
 public final class RecursividadSLAP {
 
     private RecursividadSLAP() {}
