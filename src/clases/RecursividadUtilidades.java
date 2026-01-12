@@ -204,10 +204,6 @@ public final class RecursividadUtilidades {
     // ===================== TICKET (TEXTO) =====================
     // =========================================================
 
-    /**
-     * Crea un "ticket" en texto a partir de una lista de artículos.
-     * Queda muy defendible: "lo uso para imprimir un resumen".
-     */
     public static String generarTicketRec(List<Articulo> carrito) {
         StringBuilder sb = new StringBuilder();
         sb.append("=========== TICKET ===========\n");
