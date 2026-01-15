@@ -44,6 +44,10 @@ public class Pantalones extends JFrame {
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
         btnVolver = new JButton("VOLVER");
+        
+        btnVolver.setToolTipText(
+        		"Volver a la pantalla anterior");
+        
         pSur.add(btnVolver);
 
         // --- Panel central ---
@@ -83,6 +87,9 @@ public class Pantalones extends JFrame {
             ));
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
+            lbl.setToolTipText(
+            		pantalon.getDesc());
+            
             // --- Nombre y precio ---
             JLabel lblNombre = new JLabel(pantalon.getDesc());
             lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -99,6 +106,9 @@ public class Pantalones extends JFrame {
                 CarritoGlobal.addArticulo(pantalon);
                 JOptionPane.showMessageDialog(null, pantalon.getDesc() + " añadido al carrito.");
             });
+            
+            btnAniadirCarrito.setToolTipText(
+            		"Añadir " + pantalon.getDesc() + " al carrito");
 
             // --- Panel inferior del artículo ---
             JPanel pInfo = new JPanel();

@@ -109,6 +109,14 @@ public class Usuario extends JFrame {
         btnPerfil = crearTab("Perfil");
         btnCDs = crearTab("Cambios y devoluciones");
         btnCompras = crearTab("Compras");
+        
+        //tooltips
+        btnPerfil.setToolTipText(
+        		"Muestra tus datos personales y opciones de cuenta");
+        btnCDs.setToolTipText(
+        		"Consulta y gestiona cambios y devoluciones");
+        btnCompras.setToolTipText(
+        		"Consulta el historial de pedidos");
 
         pNav.add(btnPerfil);
         if (!clases.Sesion.esAdmin) {
@@ -135,6 +143,9 @@ public class Usuario extends JFrame {
 
         btnVolver = crearBotonNeutro("VOLVER");
         pSurRight.add(btnVolver);
+        // tooltip volver
+        btnVolver.setToolTipText("Volver a la pantalla anterior");
+
 
         pSur.add(pSurRight, BorderLayout.EAST);
         getContentPane().add(pSur, BorderLayout.SOUTH);
@@ -228,6 +239,10 @@ public class Usuario extends JFrame {
             });
             columna.add(btnAdminPanel);
             columna.add(Box.createVerticalStrut(12));
+            
+            btnAdminPanel.setToolTipText(
+            		"Acceder al panel de gestión de pedidos");
+
         }
 
         // Editar
@@ -236,6 +251,9 @@ public class Usuario extends JFrame {
         btnEditarPerfil.addActionListener(ev -> abrirDialogoEditarPerfil());
         columna.add(btnEditarPerfil);
         columna.add(Box.createVerticalStrut(10));
+        
+        btnEditarPerfil.setToolTipText(
+        		"Modifica tu dirección, email y teléfono");
 
         // Cerrar sesión
         JButton btnCerrarSesion = crearBotonPeligro("CERRAR SESIÓN");
@@ -251,6 +269,10 @@ public class Usuario extends JFrame {
             dispose();
         });
         columna.add(btnCerrarSesion);
+        
+        btnCerrarSesion.setToolTipText(
+        		"Cerrar sesión y volver al menú principal");
+
 
         centro.add(Box.createVerticalGlue());
         centro.add(columna);
@@ -401,6 +423,10 @@ public class Usuario extends JFrame {
         };
 
         tablaPedidos = new JTable(modeloTablaPedidos);
+        
+        tablaPedidos.setToolTipText(
+        		"Lista de todos tus pedidos realizados");
+
         estilizarTabla(tablaPedidos);
 
         java.util.List<clases.PedidoInfo> pedidos = bd.cargarPedidosUsuario(nombreMostrado);
@@ -424,6 +450,16 @@ public class Usuario extends JFrame {
         JButton btnDevolucion = crearBotonNeutro("Solicitar devolución");
         btnDevolucion.addActionListener(e -> solicitarCambioDevolucion("DEVOLUCION"));
 
+        btnDetalle.setToolTipText(
+        		"Ver los productos incluidos en este pedido");
+        
+        btnCambio.setToolTipText(
+        		"Solicitar un cambio para este pedido");
+        
+        btnDevolucion.setToolTipText(
+        		"Solicitar una devolución del pedido");
+
+        
         acciones.add(btnDetalle);
         acciones.add(btnCambio);
         acciones.add(btnDevolucion);
@@ -533,6 +569,11 @@ public class Usuario extends JFrame {
         };
 
         tablaDirecciones = new JTable(modeloTablaDirecciones);
+        
+        tablaDirecciones.setToolTipText(
+        		"Lista de solicitudes de cambio y devolución");
+
+        
         estilizarTabla(tablaDirecciones);
 
         java.util.List<clases.SolicitudInfo> solicitudes = bd.cargarSolicitudesUsuario(nombreMostrado);

@@ -8,6 +8,7 @@ import clases.Articulo;
 import clases.CarritoGlobal;
 import clases.Sesion;
 
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -62,6 +63,23 @@ public class VentanaCarrito extends JFrame {
         lblNumArt = new JLabel("Número de artículos:");
         lblContadorArticulos = new JLabel("0");
         lblSeparador = new JLabel("|");
+        
+        //tooltips
+        btnVolver.setToolTipText(
+        		"Vuelve a la tienda");
+        btnEliminar.setToolTipText(
+        		"Elimina el artículo seleccionado del carrito");
+        btnVaciar.setToolTipText(
+        		"Vacía completamente la cesta");
+        btnFinalizar.setToolTipText(
+        		"Finaliza la compra y gira la ruleta de descuentos");
+
+        lblTotalCalculado.setToolTipText(
+        		"Precio total del carrito");
+        lblContadorArticulos.setToolTipText(
+        		"Número de artículos que hay en el carrito");
+        tabla.setToolTipText(
+        		"Lista de productos que tienes en el carrito");
 
         // Añadir paneles
         getContentPane().add(pNorte, BorderLayout.NORTH);
@@ -112,26 +130,22 @@ public class VentanaCarrito extends JFrame {
             }
         });
 
-        // Botón finalizar COMPRA (con BD)
+        // Botón finalizar COMPRA
         btnFinalizar.addActionListener(e -> {
-            // 1) Comprobar login
             if (Sesion.usuarioActual == null) {
                 JOptionPane.showMessageDialog(this, "Debes iniciar sesión para finalizar la compra");
                 return;
             }
 
-            // 2) Comprobar carrito vacío
             if (CarritoGlobal.getArticulos().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "El carrito está vacío");
                 return;
             }
 
-            // 3) Lanzar la ruleta de descuento (Thread)
             new ThreadDescuentos(() -> finalizarCompra());
         });
 
-
-        // Tabla render
+        // Render de tabla
         tabla.setDefaultRenderer(Object.class, new TableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -144,7 +158,7 @@ public class VentanaCarrito extends JFrame {
             }
         });
 
-        // Hover sobre fila
+        // Hover sobre filas
         tabla.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -159,7 +173,6 @@ public class VentanaCarrito extends JFrame {
         setVisible(true);
     }
 
-    // Actualiza total y contador
     private void actualizarTotales() {
         double total = 0;
         List<Articulo> articulos = CarritoGlobal.getArticulos();
@@ -170,13 +183,11 @@ public class VentanaCarrito extends JFrame {
         lblTotalCalculado.setText(String.format("%.2f €", total));
         lblContadorArticulos.setText(String.valueOf(contador));
     }
-    
-    
+
     private void finalizarCompra() {
         String usuario = Sesion.usuarioActual;
         List<Articulo> listaArticulos = CarritoGlobal.getArticulos();
 
-        // Volcar carrito global a la BD
         bd.vaciarCarrito(usuario);
 
         for (Articulo a : listaArticulos) {
@@ -190,7 +201,6 @@ public class VentanaCarrito extends JFrame {
             );
         }
 
-        // Crear pedido
         int idPedido = bd.crearPedidoDesdeCarrito(usuario);
 
         if (idPedido != -1) {
@@ -210,5 +220,4 @@ public class VentanaCarrito extends JFrame {
             JOptionPane.showMessageDialog(this, "No se ha podido realizar la compra");
         }
     }
-
 }

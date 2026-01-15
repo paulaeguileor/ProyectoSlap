@@ -6,7 +6,6 @@ import javax.swing.*;
 
 import BD.BD;
 import clases.Abrigo;
-import clases.MainArticulos;
 import clases.CarritoGlobal;
 
 public class Abrigos extends JFrame {
@@ -31,6 +30,9 @@ public class Abrigos extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
+        ToolTipManager.sharedInstance().setInitialDelay(200);
+        ToolTipManager.sharedInstance().setDismissDelay(8000);
+
         // --- Panel superior (título) ---
         pNorte = new JPanel();
         pNorte.setBackground(Color.WHITE);
@@ -40,11 +42,15 @@ public class Abrigos extends JFrame {
         lblTitulo.setForeground(new Color(30, 30, 30));
 
         pNorte.add(lblTitulo);
-        
+
         // --- Panel inferior (botón Volver) ---
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
         btnVolver = new JButton("VOLVER");
+
+        btnVolver.setToolTipText(
+                "Vuelve al menú principal de la tienda");
+
         pSur.add(btnVolver);
 
         // --- Panel central con GridLayout ---
@@ -52,12 +58,8 @@ public class Abrigos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        
-        
         List<Abrigo> listaAbrigos = this.bd.cargarAbrigos();
-        System.out.println("Abrigos cargados: " + listaAbrigos.size());
 
-        
         // --- Crear panel para cada abrigo ---
         for (Abrigo abrigo : listaAbrigos) {
             JPanel pArticulo = new JPanel(new BorderLayout());
@@ -79,6 +81,10 @@ public class Abrigos extends JFrame {
             Image img = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
             JLabel lbl = new JLabel(new ImageIcon(img));
 
+            // Tooltip en la imagen con la descripción
+            lbl.setToolTipText(
+                    abrigo.getDesc());
+
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
             lbl.setVerticalAlignment(SwingConstants.CENTER);
             lbl.setOpaque(true);
@@ -89,7 +95,6 @@ public class Abrigos extends JFrame {
             ));
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
-            // --- Información del abrigo ---
             JLabel lblNombre = new JLabel(abrigo.getDesc());
             lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
             lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -98,18 +103,21 @@ public class Abrigos extends JFrame {
             lblPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
             lblPrecio.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // --- Botón ---
             JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
             btnAniadirCarrito.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            btnAniadirCarrito.setToolTipText(
+                    "Añade este producto al carrito");
+
             btnAniadirCarrito.addActionListener(e -> {
                 CarritoGlobal.addArticulo(abrigo);
                 JOptionPane.showMessageDialog(null, abrigo.getDesc() + " añadido al carrito.");
             });
 
-            // --- Panel inferior del artículo ---
             JPanel pInfo = new JPanel();
             pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
             pInfo.setBackground(Color.WHITE);
+
             pInfo.add(lblNombre);
             pInfo.add(Box.createVerticalStrut(5));
             pInfo.add(lblPrecio);

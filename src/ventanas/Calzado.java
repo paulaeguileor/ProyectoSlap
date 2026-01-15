@@ -44,6 +44,10 @@ public class Calzado extends JFrame {
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
         btnVolver = new JButton("VOLVER");
+        
+        btnVolver.setToolTipText(
+        		"Volver a la pantalla anterior");
+        
         pSur.add(btnVolver);
 
         // --- Panel central ---
@@ -83,6 +87,9 @@ public class Calzado extends JFrame {
             ));
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
+            lbl.setToolTipText(
+            		calzado.getDesc());
+            
             // --- Nombre y precio ---
             JLabel lblNombre = new JLabel(calzado.getDesc());
             lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -94,6 +101,10 @@ public class Calzado extends JFrame {
 
             // --- Botón ---
             JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
+            
+            btnAniadirCarrito.setToolTipText(
+            		"Añadir " + calzado.getDesc() + " al carrito");
+            
             btnAniadirCarrito.setAlignmentX(Component.CENTER_ALIGNMENT);
             btnAniadirCarrito.addActionListener(e -> {
                 CarritoGlobal.addArticulo(calzado);

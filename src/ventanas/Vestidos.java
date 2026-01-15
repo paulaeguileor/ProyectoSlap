@@ -45,6 +45,10 @@ public class Vestidos extends JFrame {
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
         btnVolver = new JButton("VOLVER");
+        
+        btnVolver.setToolTipText(
+        		"Volver a la pantalla anterior");
+        
         pSur.add(btnVolver);
 
         // --- Panel central ---
@@ -84,6 +88,10 @@ public class Vestidos extends JFrame {
             ));
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
+         
+            lbl.setToolTipText(
+            		vestido.getDesc());
+            
             // --- Nombre y precio ---
             JLabel lblNombre = new JLabel(vestido.getDesc());
             lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -100,6 +108,9 @@ public class Vestidos extends JFrame {
                 CarritoGlobal.addArticulo(vestido);
                 JOptionPane.showMessageDialog(null, vestido.getDesc() + " añadido al carrito.");
             });
+            
+            btnAniadirCarrito.setToolTipText(
+            		"Añadir " + vestido.getDesc() + " al carrito");
 
             // --- Panel inferior del artículo ---
             JPanel pInfo = new JPanel();

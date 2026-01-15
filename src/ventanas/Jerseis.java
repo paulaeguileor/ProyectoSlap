@@ -46,6 +46,10 @@ public class Jerseis extends JFrame {
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
         btnVolver = new JButton("VOLVER");
+        
+        btnVolver.setToolTipText(
+        		"Volver a la pantalla anterior");
+        
         pSur.add(btnVolver);
 
         // --- Panel central con GridLayout ---
@@ -86,8 +90,12 @@ public class Jerseis extends JFrame {
                     BorderFactory.createEmptyBorder(10, 10, 10, 10)
             ));
 
+
             // Tamaño uniforme del marco de cada imagen
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
+            
+            lbl.setToolTipText(
+            		jersey.getDesc());
             
             // --- etiqueta nombre del jersey ---
             JLabel lblNombre = new JLabel(jersey.getDesc());
@@ -112,6 +120,9 @@ public class Jerseis extends JFrame {
             pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
             pInfo.setBackground(Color.WHITE);
 
+            btnAniadirCarrito.setToolTipText(
+            		"Añadir " + jersey.getDesc() + " al carrito");
+            
             btnAniadirCarrito.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             pInfo.add(lblNombre);
