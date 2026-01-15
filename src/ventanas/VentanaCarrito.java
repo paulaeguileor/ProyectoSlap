@@ -116,64 +116,20 @@ public class VentanaCarrito extends JFrame {
         btnFinalizar.addActionListener(e -> {
             // 1) Comprobar login
             if (Sesion.usuarioActual == null) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Debes iniciar sesión para finalizar la compra",
-                        "Atención",
-                        JOptionPane.WARNING_MESSAGE
-                );
+                JOptionPane.showMessageDialog(this, "Debes iniciar sesión para finalizar la compra");
                 return;
             }
 
-            String usuario = Sesion.usuarioActual;
-
-            // 2) Obtener artículos del carrito global
-            List<Articulo> listaArticulos = CarritoGlobal.getArticulos();
-            if (listaArticulos.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "El carrito está vacío",
-                        "Atención",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+            // 2) Comprobar carrito vacío
+            if (CarritoGlobal.getArticulos().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El carrito está vacío");
                 return;
             }
 
-            // 3) Volcar carrito global a la tabla Carrito de la BD
-            bd.vaciarCarrito(usuario);  // limpiamos lo anterior por si acaso
-
-            for (Articulo a : listaArticulos) {
-                String tipo = a.getClass().getSimpleName();
-                int codigo = a.getCodigo();
-                String desc = a.getDesc();
-                int cantidad = 1;  // ahora mismo siempre 1
-                double precio = a.getPrecio();
-
-                bd.agregarAlCarrito(usuario, tipo, codigo, desc, cantidad, precio);
-            }
-
-            // 4) Crear pedido desde el carrito BD
-            int idPedido = bd.crearPedidoDesdeCarrito(usuario);
-
-            if (idPedido != -1) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "¡Tu compra se ha realizado con éxito!\nNº de pedido: " + idPedido,
-                        "Compra realizada",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-                CarritoGlobal.clear();
-                modelo.fireTableDataChanged();
-                actualizarTotales();
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "No se ha podido realizar la compra",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
+            // 3) Lanzar la ruleta de descuento (Thread)
+            new ThreadDescuentos(() -> finalizarCompra());
         });
+
 
         // Tabla render
         tabla.setDefaultRenderer(Object.class, new TableCellRenderer() {
@@ -214,4 +170,45 @@ public class VentanaCarrito extends JFrame {
         lblTotalCalculado.setText(String.format("%.2f €", total));
         lblContadorArticulos.setText(String.valueOf(contador));
     }
+    
+    
+    private void finalizarCompra() {
+        String usuario = Sesion.usuarioActual;
+        List<Articulo> listaArticulos = CarritoGlobal.getArticulos();
+
+        // Volcar carrito global a la BD
+        bd.vaciarCarrito(usuario);
+
+        for (Articulo a : listaArticulos) {
+            bd.agregarAlCarrito(
+                    usuario,
+                    a.getClass().getSimpleName(),
+                    a.getCodigo(),
+                    a.getDesc(),
+                    1,
+                    a.getPrecio()
+            );
+        }
+
+        // Crear pedido
+        int idPedido = bd.crearPedidoDesdeCarrito(usuario);
+
+        if (idPedido != -1) {
+            double totalFinal = CarritoGlobal.getTotalConDescuento();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡Compra realizada!\n" +
+                    "Nº de pedido: " + idPedido + "\n" +
+                    "Total final: " + String.format("%.2f €", totalFinal)
+            );
+
+            CarritoGlobal.clear();
+            modelo.fireTableDataChanged();
+            actualizarTotales();
+        } else {
+            JOptionPane.showMessageDialog(this, "No se ha podido realizar la compra");
+        }
+    }
+
 }
