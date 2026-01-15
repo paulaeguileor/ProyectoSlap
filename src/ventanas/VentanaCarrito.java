@@ -7,7 +7,7 @@ import BD.BD;
 import clases.Articulo;
 import clases.CarritoGlobal;
 import clases.Sesion;
-
+import utils.UIUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -25,7 +25,6 @@ public class VentanaCarrito extends JFrame {
     private ModeloVentanaCarrito modelo;
 
     private int fila = -1;
-
     private BD bd;
 
     public VentanaCarrito(JFrame vAnterior, BD bd) {
@@ -39,7 +38,7 @@ public class VentanaCarrito extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        // Modelo y tabla apuntando al carrito global
+        // Modelo y tabla
         List<Articulo> articulos = CarritoGlobal.getArticulos();
         modelo = new ModeloVentanaCarrito(articulos);
         tabla = new JTable(modelo);
@@ -63,25 +62,17 @@ public class VentanaCarrito extends JFrame {
         lblNumArt = new JLabel("Número de artículos:");
         lblContadorArticulos = new JLabel("0");
         lblSeparador = new JLabel("|");
-        
-        //tooltips
-        btnVolver.setToolTipText(
-        		"Vuelve a la tienda");
-        btnEliminar.setToolTipText(
-        		"Elimina el artículo seleccionado del carrito");
-        btnVaciar.setToolTipText(
-        		"Vacía completamente la cesta");
-        btnFinalizar.setToolTipText(
-        		"Finaliza la compra y gira la ruleta de descuentos");
 
-        lblTotalCalculado.setToolTipText(
-        		"Precio total del carrito");
-        lblContadorArticulos.setToolTipText(
-        		"Número de artículos que hay en el carrito");
-        tabla.setToolTipText(
-        		"Lista de productos que tienes en el carrito");
+        // Tooltips (doble línea)
+        UIUtils.aplicarTooltipDoble(btnVolver, "Volver", "Regresa a la tienda");
+        UIUtils.aplicarTooltipDoble(btnEliminar, "Eliminar", "Borra el producto seleccionado");
+        UIUtils.aplicarTooltipDoble(btnVaciar, "Vaciar", "Elimina todos los productos del carrito");
+        UIUtils.aplicarTooltipDoble(btnFinalizar, "Finalizar", "Pagar y girar la ruleta de descuento");
+        UIUtils.aplicarTooltipDoble(lblTotalCalculado, "Total", "Precio final del carrito");
+        UIUtils.aplicarTooltipDoble(lblContadorArticulos, "Artículos", "Número de productos añadidos");
+        UIUtils.aplicarTooltipDoble(tabla, "Carrito", "Lista de artículos añadidos");
 
-        // Añadir paneles
+        // Layout
         getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(pCentro, BorderLayout.CENTER);
         getContentPane().add(pSur, BorderLayout.SOUTH);
@@ -101,13 +92,13 @@ public class VentanaCarrito extends JFrame {
 
         actualizarTotales();
 
-        // Botón volver
+        // Volver
         btnVolver.addActionListener(e -> {
             vAnterior.setVisible(true);
             vActual.dispose();
         });
 
-        // Botón eliminar
+        // Eliminar
         btnEliminar.addActionListener(e -> {
             int filaSeleccionada = tabla.getSelectedRow();
             if (filaSeleccionada != -1) {
@@ -115,11 +106,11 @@ public class VentanaCarrito extends JFrame {
                 modelo.fireTableDataChanged();
                 actualizarTotales();
             } else {
-                JOptionPane.showMessageDialog(this, "Selecciona un artículo para eliminar");
+                UIUtils.warn(this, "Selecciona un artículo para eliminar");
             }
         });
 
-        // Botón vaciar
+        // Vaciar
         btnVaciar.addActionListener(e -> {
             CarritoGlobal.clear();
             modelo.fireTableDataChanged();
@@ -130,26 +121,27 @@ public class VentanaCarrito extends JFrame {
             }
         });
 
-        // Botón finalizar COMPRA
+        // Finalizar compra
         btnFinalizar.addActionListener(e -> {
             if (Sesion.usuarioActual == null) {
-                JOptionPane.showMessageDialog(this, "Debes iniciar sesión para finalizar la compra");
+                UIUtils.warn(this, "Debes iniciar sesión para finalizar la compra");
                 return;
             }
 
             if (CarritoGlobal.getArticulos().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "El carrito está vacío");
+                UIUtils.warn(this, "El carrito está vacío");
                 return;
             }
 
             new ThreadDescuentos(() -> finalizarCompra());
         });
 
-        // Render de tabla
+        // Render tabla
         tabla.setDefaultRenderer(Object.class, new TableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                           boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
                 JLabel lbl = new JLabel(value.toString());
                 lbl.setOpaque(true);
                 lbl.setHorizontalAlignment(JLabel.CENTER);
@@ -158,16 +150,13 @@ public class VentanaCarrito extends JFrame {
             }
         });
 
-        // Hover sobre filas
+        // Hover
         tabla.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
+            @Override public void mouseMoved(MouseEvent e) {
                 fila = tabla.rowAtPoint(e.getPoint());
                 tabla.repaint();
             }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {}
+            @Override public void mouseDragged(MouseEvent e) {}
         });
 
         setVisible(true);
@@ -176,12 +165,10 @@ public class VentanaCarrito extends JFrame {
     private void actualizarTotales() {
         double total = 0;
         List<Articulo> articulos = CarritoGlobal.getArticulos();
-        int contador = articulos.size();
-        for (Articulo a : articulos) {
-            total += a.getPrecio();
-        }
+        for (Articulo a : articulos) total += a.getPrecio();
+
         lblTotalCalculado.setText(String.format("%.2f €", total));
-        lblContadorArticulos.setText(String.valueOf(contador));
+        lblContadorArticulos.setText(String.valueOf(articulos.size()));
     }
 
     private void finalizarCompra() {
@@ -206,18 +193,14 @@ public class VentanaCarrito extends JFrame {
         if (idPedido != -1) {
             double totalFinal = CarritoGlobal.getTotalConDescuento();
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "¡Compra realizada!\n" +
-                    "Nº de pedido: " + idPedido + "\n" +
-                    "Total final: " + String.format("%.2f €", totalFinal)
-            );
+            UIUtils.info(this,
+                    "Pedido nº " + idPedido + "\nTotal final: " + String.format("%.2f €", totalFinal));
 
             CarritoGlobal.clear();
             modelo.fireTableDataChanged();
             actualizarTotales();
         } else {
-            JOptionPane.showMessageDialog(this, "No se ha podido realizar la compra");
+            UIUtils.error(this, "No se ha podido realizar la compra");
         }
     }
 }
