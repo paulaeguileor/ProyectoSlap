@@ -13,7 +13,7 @@ public class Abrigos extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JFrame vActual, vAnterior;
-    private JPanel pSur, pCentro;
+    private JPanel pSur, pCentro, pNorte;
     private JButton btnVolver;
     private JScrollPane scrollPane;
     private BD bd;
@@ -31,13 +31,20 @@ public class Abrigos extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
+        // --- Panel superior (título) ---
+        pNorte = new JPanel();
+        pNorte.setBackground(Color.WHITE);
+
+        JLabel lblTitulo = new JLabel("ABRIGOS");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        lblTitulo.setForeground(new Color(30, 30, 30));
+
+        pNorte.add(lblTitulo);
+        
         // --- Panel inferior (botón Volver) ---
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
-        btnVolver = new JButton("Volver");
-        btnVolver.setFocusPainted(false);
-        btnVolver.setBackground(new Color(230, 230, 230));
-        btnVolver.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        btnVolver = new JButton("VOLVER");
         pSur.add(btnVolver);
 
         // --- Panel central con GridLayout ---
@@ -45,19 +52,22 @@ public class Abrigos extends JFrame {
         pCentro.setBackground(Color.WHITE);
         pCentro.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
+        
+        
         List<Abrigo> listaAbrigos = this.bd.cargarAbrigos();
         System.out.println("Abrigos cargados: " + listaAbrigos.size());
 
+        
         // --- Crear panel para cada abrigo ---
         for (Abrigo abrigo : listaAbrigos) {
             JPanel pArticulo = new JPanel(new BorderLayout());
+            pArticulo.setBackground(Color.WHITE);
+
             ImageIcon icon = new ImageIcon("img/chaquetas/abrigo" + abrigo.getCodigo() + ".png");
 
-            // Obtener dimensiones originales
             int originalWidth = icon.getIconWidth();
             int originalHeight = icon.getIconHeight();
-            
-            // Escalado proporcional solo si son demasiado grandes
+
             int maxWidth = 350;
             int maxHeight = 525;
             double scale = Math.min((double) maxWidth / originalWidth, (double) maxHeight / originalHeight);
@@ -65,12 +75,10 @@ public class Abrigos extends JFrame {
 
             int newWidth = (int) (originalWidth * scale);
             int newHeight = (int) (originalHeight * scale);
-            
-            Image img = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 
+            Image img = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
             JLabel lbl = new JLabel(new ImageIcon(img));
-            
-            // Centrado y estilo de “tarjeta”
+
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
             lbl.setVerticalAlignment(SwingConstants.CENTER);
             lbl.setOpaque(true);
@@ -79,34 +87,53 @@ public class Abrigos extends JFrame {
                     BorderFactory.createLineBorder(new Color(235, 235, 235)),
                     BorderFactory.createEmptyBorder(10, 10, 10, 10)
             ));
-            
-            // Tamaño uniforme del marco de cada imagen
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
 
+            // --- Información del abrigo ---
+            JLabel lblNombre = new JLabel(abrigo.getDesc());
+            lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JLabel lblPrecio = new JLabel(String.format("%.2f €", abrigo.getPrecio()));
+            lblPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
+            lblPrecio.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            // --- Botón ---
             JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
+            btnAniadirCarrito.setAlignmentX(Component.CENTER_ALIGNMENT);
             btnAniadirCarrito.addActionListener(e -> {
                 CarritoGlobal.addArticulo(abrigo);
                 JOptionPane.showMessageDialog(null, abrigo.getDesc() + " añadido al carrito.");
             });
 
+            // --- Panel inferior del artículo ---
+            JPanel pInfo = new JPanel();
+            pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
+            pInfo.setBackground(Color.WHITE);
+            pInfo.add(lblNombre);
+            pInfo.add(Box.createVerticalStrut(5));
+            pInfo.add(lblPrecio);
+            pInfo.add(Box.createVerticalStrut(10));
+            pInfo.add(btnAniadirCarrito);
 
             pArticulo.add(lbl, BorderLayout.CENTER);
-            pArticulo.add(btnAniadirCarrito, BorderLayout.SOUTH);
+            pArticulo.add(pInfo, BorderLayout.SOUTH);
 
             pCentro.add(pArticulo);
         }
 
-        // --- Scroll con panel central ---
+        // --- Scroll ---
         scrollPane = new JScrollPane(pCentro);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBackground(Color.WHITE);
 
+        getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(pSur, BorderLayout.SOUTH);
 
-        // --- Listener botón Volver ---
+        // --- Botón volver ---
         btnVolver.addActionListener(e -> {
             vActual.dispose();
             vAnterior.setVisible(true);

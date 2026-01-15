@@ -133,7 +133,7 @@ public class Usuario extends JFrame {
         JPanel pSurRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         pSurRight.setBackground(BG_APP);
 
-        btnVolver = crearBotonNeutro("Volver");
+        btnVolver = crearBotonNeutro("VOLVER");
         pSurRight.add(btnVolver);
 
         pSur.add(pSurRight, BorderLayout.EAST);

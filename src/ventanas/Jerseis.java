@@ -14,7 +14,7 @@ public class Jerseis extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JFrame vActual, vAnterior; 
-    private JPanel pSur, pCentro;
+    private JPanel pSur, pCentro, pNorte;
     private JButton btnVolver;
     private JScrollPane scrollPane;
     private BD bd;
@@ -32,13 +32,20 @@ public class Jerseis extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
+     // --- Panel superior (título) ---
+        pNorte = new JPanel();
+        pNorte.setBackground(Color.WHITE);
+
+        JLabel lblTitulo = new JLabel("JERSÉIS");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        lblTitulo.setForeground(new Color(30, 30, 30));
+
+        pNorte.add(lblTitulo);
+        
         // --- Panel inferior (botón Volver) ---
         pSur = new JPanel();
         pSur.setBackground(Color.WHITE);
-        btnVolver = new JButton("Volver");
-        btnVolver.setFocusPainted(false);
-        btnVolver.setBackground(new Color(230, 230, 230));
-        btnVolver.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        btnVolver = new JButton("VOLVER");
         pSur.add(btnVolver);
 
         // --- Panel central con GridLayout ---
@@ -82,13 +89,39 @@ public class Jerseis extends JFrame {
             // Tamaño uniforme del marco de cada imagen
             lbl.setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 20));
             
+            // --- etiqueta nombre del jersey ---
+            JLabel lblNombre = new JLabel(jersey.getDesc());
+            lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            // --- etiqueta precio del jersey ---
+            JLabel lblPrecio = new JLabel(String.format("%.2f €", jersey.getPrecio()));
+            lblPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
+            lblPrecio.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            
             JButton btnAniadirCarrito = new JButton("AÑADIR AL CARRITO");
             btnAniadirCarrito.addActionListener(e -> {
                 CarritoGlobal.addArticulo(jersey);
                 JOptionPane.showMessageDialog(null, jersey.getDesc() + " añadido al carrito.");
             });
+            
+            
+            // --- panel con nombre, precio y botón ---
+            JPanel pInfo = new JPanel();
+            pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
+            pInfo.setBackground(Color.WHITE);
+
+            btnAniadirCarrito.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            pInfo.add(lblNombre);
+            pInfo.add(Box.createVerticalStrut(5));
+            pInfo.add(lblPrecio);
+            pInfo.add(Box.createVerticalStrut(10));
+            pInfo.add(btnAniadirCarrito);
+
             pArticulo.add(lbl, BorderLayout.CENTER);
-            pArticulo.add(btnAniadirCarrito, BorderLayout.SOUTH);
+            pArticulo.add(pInfo, BorderLayout.SOUTH);
             
             pCentro.add(pArticulo);
            
@@ -102,6 +135,7 @@ public class Jerseis extends JFrame {
         scrollPane.setBackground(Color.WHITE);
 
         // --- Añadir a la ventana ---
+        getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(pSur, BorderLayout.SOUTH);
 

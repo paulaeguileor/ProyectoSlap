@@ -51,10 +51,10 @@ public class VentanaCarrito extends JFrame {
         pTotal = new JPanel(new GridLayout(1, 3));
 
         // Botones
-        btnVolver = new JButton("Volver");
-        btnEliminar = new JButton("Eliminar artículo");
-        btnVaciar = new JButton("Vaciar cesta");
-        btnFinalizar = new JButton("Finalizar compra");
+        btnVolver = new JButton("VOLVER");
+        btnEliminar = new JButton("ELIMINAR ARTÍCULO");
+        btnVaciar = new JButton("VACIAR CESTA");
+        btnFinalizar = new JButton("FINALIZAR COMPRA");
 
         // Labels
         lblTotal = new JLabel("Total calculado:");
